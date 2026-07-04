@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chrome Built-in AI 60分ミニラボ — Codelab</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1 class="logo">🧪 Codelab</h1>
+      <p class="tagline">Chrome Built-in AI<br>60分ミニラボ</p>
+      <nav>
+        <ol id="toc"></ol>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <article id="ch-0" data-title="🏁 導入・環境チェック">
+        <h1>🏁 Chapter 0: 導入・環境チェック</h1>
+
+        <div class="meta-card">
+          <strong>所要時間:</strong> 8 分 / <strong>必修</strong><br>
+          <strong>この章のゴール:</strong> 全 API の共通パターンを理解し、環境が使えることを確認する
+        </div>
+
+        <h2>📚 Chrome Built-in AI とは？</h2>
+        <p>Chrome 内蔵の <strong>Gemini Nano</strong> モデルを使い、サーバー通信なしにブラウザ内で LLM 推論を実行できる仕組みです。プライバシー・遅延・コストの面で強力な利点があります。</p>
+
+        <h2>🎯 5 つの API</h2>
+        <ul>
+          <li>🔤 <strong>Language Detector</strong> — テキストの言語を判定</li>
+          <li>🌐 <strong>Translator</strong> — 多言語翻訳</li>
+          <li>📝 <strong>Summarizer</strong> — 長文の要約</li>
+          <li>💬 <strong>Prompt API（テキスト）</strong> — 汎用 LLM（構造化出力対応）</li>
+          <li>📷 <strong>Prompt API（画像）</strong> — マルチモーダル入力</li>
+        </ul>
+
+        <h2>🧭 共通の 3 ステップパターン</h2>
+        <p>全 API は同じ 3 ステップで呼び出せます：</p>
+<pre><code>// ① 使えるか判定（4 状態を返す）
+const state = await Api.availability();
+// 'unavailable' | 'downloadable' | 'downloading' | 'available'
+
+// ② セッション/インスタンスを作成
+const session = await Api.create({ ...options });
+
+// ③ 実行メソッド
+const result = await session.someMethod(input);</code></pre>
+
+        <h2>🚦 availability の 4 状態</h2>
+        <ul>
+          <li><code>unavailable</code> — 環境が対応していない（OS/フラグ/ハードウェア要件を満たさず）</li>
+          <li><code>downloadable</code> — 使えるが、モデルのダウンロードがまだ</li>
+          <li><code>downloading</code> — 現在ダウンロード中</li>
+          <li><code>available</code> — すぐ使える状態 ✅</li>
+        </ul>
+
+        <div class="callout">
+          💡 <code>downloadable</code> のときに <code>create()</code> を呼ぶと自動的にダウンロードが開始されます。<code>monitor</code> オプションで進捗イベントを購読できます（Chapter 2 で扱います）。
+        </div>
+
+        <div class="checkpoint">
+          <strong>✅ Checkpoint</strong>
+          <ol>
+            <li>スターターの <code>index.html</code> をブラウザで開いた</li>
+            <li>ヘッダの環境バッジがすべて <code>✅ available</code> になっている</li>
+            <li>まだの API があれば、そのバッジ状態を確認し、必要ならモデル DL を開始した</li>
+          </ol>
+        </div>
+
+        <h2>🚀 次のステップ</h2>
+        <p>環境が整ったら、左サイドバーから好きな章を選んでください。<strong>順序は自由</strong>です。</p>
+        <p>迷ったら難易度⭐️の少ない <a href="#ch-1">Chapter 1（Language Detector）</a> からがおすすめです。</p>
+      </article>
+
+      <article id="ch-1" data-title="🔤 Language Detector">
+        <h1>🔤 Chapter 1: Language Detector</h1>
+
+        <div class="meta-card">
+          <strong>所要時間:</strong> 7 分 / <strong>難易度:</strong> ⭐️ / <strong>使う共通ステップ:</strong> ①②③<br>
+          <strong>この章のご褒美:</strong> <code>availability</code> の 4 状態を最も分かりやすく体験
+        </div>
+
+        <h2>🎯 ゴール</h2>
+        <p>入力文の言語を判定し、トップ 3 候補を信頼度バー付きで表示する。</p>
+
+        <h2>📚 API ざっくり紹介</h2>
+        <p>Language Detector は、入力テキストがどの言語かを推定します。複数の候補と信頼度を返すため、単に「英語らしい」だけでなく「英語の可能性が 98%、ドイツ語の可能性が 1%…」といった分布として結果を扱えます。</p>
+        <p>グローバルオブジェクトとして <code>LanguageDetector</code> がブラウザに露出されており、そこから静的メソッドで使い始めます。</p>
+        <p>公式ドキュメント: <a href="https://developer.chrome.com/docs/ai/language-detection" target="_blank" rel="noopener">Language Detection API</a></p>
+
+        <h2>📖 API リファレンス</h2>
+
+        <h3><code>LanguageDetector.availability(options?)</code></h3>
+        <p>この環境で Language Detector が使えるかを判定する静的メソッド。<strong>ページ読込直後の環境チェックで最初に呼ぶ関数</strong>です。</p>
+        <ul>
+          <li><strong>引数</strong>: 省略可。特定言語だけを判定対象にしたい場合は <code>{ expectedInputLanguages: ['en', 'ja', ...] }</code> を渡すことで、その言語ペアが使えるかを判定できます。</li>
+          <li><strong>戻り値</strong>: <code>Promise&lt;string&gt;</code>。以下 4 状態のいずれかが返ります。
+            <ul>
+              <li><code>'unavailable'</code> — 環境非対応（フラグ未設定・OS要件不足など）</li>
+              <li><code>'downloadable'</code> — 使えるが、モデル未ダウンロード</li>
+              <li><code>'downloading'</code> — 現在ダウンロード中</li>
+              <li><code>'available'</code> — すぐ使える ✅</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h3><code>LanguageDetector.create(options?)</code></h3>
+        <p>実際に判定を実行するためのインスタンスを作成する静的メソッド。<strong>availability がまだ <code>'available'</code> でない場合、この呼び出しがトリガーになってモデルダウンロードが開始されます</strong>。</p>
+        <ul>
+          <li><strong>引数</strong>: 省略可。オプションオブジェクト。
+            <ul>
+              <li><code>expectedInputLanguages?: string[]</code> — 判定候補を絞る言語コード配列（<code>['en', 'ja', 'fr']</code> など）。指定すると精度と速度が向上します。</li>
+              <li><code>monitor?: (m: EventTarget) =&gt; void</code> — モデル DL 進捗を購読するためのコールバック。<code>m.addEventListener('downloadprogress', e =&gt; ...)</code> で <code>e.loaded</code>（0〜1）を受け取れます。</li>
+            </ul>
+          </li>
+          <li><strong>戻り値</strong>: <code>Promise&lt;LanguageDetector&gt;</code>（インスタンス）。以下のメソッドが呼べます。</li>
+        </ul>
+
+        <h3><code>detector.detect(text)</code></h3>
+        <p>作成したインスタンスに対して、実際にテキストの言語を判定させるメソッド。</p>
+        <ul>
+          <li><strong>引数</strong>: <code>text: string</code> — 判定対象のテキスト。</li>
+          <li><strong>戻り値</strong>: <code>Promise&lt;Array&lt;{ detectedLanguage: string, confidence: number }&gt;&gt;</code>。
+            <ul>
+              <li><code>detectedLanguage</code>: BCP-47 言語コード（<code>'en'</code>, <code>'ja'</code>, <code>'fr'</code> など）</li>
+              <li><code>confidence</code>: 0〜1 の信頼度。高いほど確からしい。</li>
+              <li>配列は<strong>信頼度降順</strong>で並んでいます。最初の要素が最も確からしい候補。</li>
+            </ul>
+          </li>
+        </ul>
+        <p><strong>戻り値の例：</strong></p>
+<pre><code>[
+  { detectedLanguage: 'fr', confidence: 0.98 },
+  { detectedLanguage: 'de', confidence: 0.008 },
+  { detectedLanguage: 'en', confidence: 0.004 },
+  // ... 低信頼度の候補が続く
+]</code></pre>
+
+        <h3><code>detector.destroy()</code></h3>
+        <p>インスタンスが持つリソースを解放します。頻繁に作り直すアプリでは呼ぶと良いですが、この Codelab では省略しても問題ありません。</p>
+
+        <div class="callout">
+          💡 <strong>ライフサイクル</strong>: 一度 <code>create()</code> したインスタンスは何度でも <code>detect()</code> できます。判定のたびに <code>create()</code> するのは無駄なので、可能なら再利用しましょう。
+        </div>
+
+        <div class="step">
+          <h3>🌱 STEP 1: 最小動作（3 分）</h3>
+          <p><strong>やること:</strong> 入力文の言語を判定するだけ。</p>
+          <p><strong>どこに書く:</strong> <code>main.js</code> の <code>handleLanguageDetector()</code> 内、<code>// TODO 1</code>〜<code>// TODO 3</code></p>
+<pre><code>// TODO 1: セッション作成
+const detector = await LanguageDetector.create();
+
+// TODO 2: 判定実行
+const results = await detector.detect(text);
+
+// TODO 3: 全結果を表示
+renderOutput('chapter-1', results);</code></pre>
+          <p><strong>期待される画面:</strong> 出力エリアに <code>[{ detectedLanguage: 'fr', confidence: 0.98 }, ...]</code> のような配列が表示される。</p>
+        </div>
+
+        <div class="step">
+          <h3>🌿 STEP 2: トップ 3 に絞る（2 分）</h3>
+          <p><strong>やること:</strong> 結果配列を上位 3 件に絞って表示。</p>
+<pre><code>// TODO 3 を書き換え
+renderOutput('chapter-1', results.slice(0, 3));</code></pre>
+          <p>Language Detector は多数の候補（低信頼度のものも含む）を返します。トップ 3 で十分実用的です。</p>
+        </div>
+
+        <div class="step">
+          <h3>🌳 STEP 3: 候補言語を絞る（2 分）</h3>
+          <p><strong>やること:</strong> UI の「候補言語を英・日・仏に絞る」チェックボックスが ON のときだけ <code>expectedInputLanguages</code> を渡す。</p>
+<pre><code>// TODO 1 を書き換え
+const detector = await LanguageDetector.create(
+  document.getElementById('ld-restrict').checked
+    ? { expectedInputLanguages: ['en', 'ja', 'fr'] }
+    : undefined
+);</code></pre>
+          <div class="callout">
+            💡 候補を絞ると精度と速度が向上します。用途があらかじめ限定的なら積極的に指定すべきオプション。
+          </div>
+        </div>
+
+        <h2>🎨 Extend this!</h2>
+        <ul>
+          <li>入力中にリアルタイムで判定（<code>input</code> イベント + デバウンス）</li>
+          <li>信頼度をカラフルなバーで可視化</li>
+          <li>Translator と組み合わせて自動翻訳（Ch2 と連携）</li>
+          <li>絵文字フラッグを言語コードから引く 🇫🇷🇯🇵🇺🇸</li>
+        </ul>
+
+        <div class="checkpoint">
+          <strong>✅ Checkpoint</strong>
+          <ol>
+            <li>英語・日本語・仏語の文が正しく判定される</li>
+            <li>トップ 3 の信頼度が出力に表示される</li>
+            <li>候補絞り込みチェックの ON/OFF で結果配列の中身が変わる</li>
+          </ol>
+        </div>
+      </article>
+
+      <article id="ch-2" data-title="🌐 Translator">
+        <h1>🌐 Chapter 2: Translator</h1>
+
+        <div class="meta-card">
+          <strong>所要時間:</strong> 10 分 / <strong>難易度:</strong> ⭐️⭐️ / <strong>使う共通ステップ:</strong> ①②③<br>
+          <strong>この章のご褒美:</strong> モデル DL 進捗を <code>downloadprogress</code> イベントで可視化
+        </div>
+
+        <h2>🎯 ゴール</h2>
+        <p>source/target 言語を UI で選んで翻訳し、初回のモデルダウンロード進捗をリアルタイム表示する。</p>
+
+        <h2>📚 API ざっくり紹介</h2>
+        <p>Translator は、<strong>「source 言語」から「target 言語」へ</strong>の 1 方向翻訳を行います。逆方向に翻訳したければ source と target を入れ替えた別のインスタンスを作ります。</p>
+        <p><strong>言語ペアごとに専用モデル</strong>を持つのが特徴で、たとえば en→ja のモデルと ja→en のモデルは別々にダウンロードされます。初回だけ数十MB〜数百MBのダウンロードが発生し、2 回目以降はキャッシュから即座に起動します。</p>
+        <p>公式ドキュメント: <a href="https://developer.chrome.com/docs/ai/translator-api" target="_blank" rel="noopener">Translator API</a></p>
+
+        <h2>📖 API リファレンス</h2>
+
+        <h3><code>Translator.availability(options)</code></h3>
+        <p>指定した言語ペアで翻訳が使えるかを判定する静的メソッド。<strong>Language Detector と違って source/target の指定が必須</strong>な点に注意。</p>
+        <ul>
+          <li><strong>引数</strong>: <code>{ sourceLanguage: string, targetLanguage: string }</code>（必須）。BCP-47 言語コード（<code>'en'</code>, <code>'ja'</code>, <code>'fr'</code> など）。</li>
+          <li><strong>戻り値</strong>: <code>Promise&lt;string&gt;</code>。<code>'unavailable' | 'downloadable' | 'downloading' | 'available'</code> のいずれか。</li>
+        </ul>
+
+        <h3><code>Translator.create(options)</code></h3>
+        <p>翻訳を実行するためのインスタンスを作成する静的メソッド。<code>availability</code> が <code>'downloadable'</code> の状態でこれを呼ぶと、指定した言語ペアのモデルダウンロードが始まります。</p>
+        <ul>
+          <li><strong>引数</strong>: オプションオブジェクト（必須）。
+            <ul>
+              <li><code>sourceLanguage: string</code>（必須）— 翻訳元の言語コード</li>
+              <li><code>targetLanguage: string</code>（必須）— 翻訳先の言語コード</li>
+              <li><code>monitor?: (m: EventTarget) =&gt; void</code> — DL 進捗コールバック。<code>m.addEventListener('downloadprogress', e =&gt; ...)</code></li>
+              <li><code>signal?: AbortSignal</code> — 作成処理をキャンセルする場合に使用</li>
+            </ul>
+          </li>
+          <li><strong>戻り値</strong>: <code>Promise&lt;Translator&gt;</code>（インスタンス）。</li>
+        </ul>
+
+        <h3><code>translator.translate(text)</code></h3>
+        <p>作成したインスタンスに対して、実際に翻訳を実行するメソッド。</p>
+        <ul>
+          <li><strong>引数</strong>: <code>text: string</code> — 翻訳したい原文。</li>
+          <li><strong>戻り値</strong>: <code>Promise&lt;string&gt;</code> — 翻訳された文字列（1 つの完成した文字列）。</li>
+        </ul>
+        <p><strong>戻り値の例：</strong></p>
+<pre><code>await translator.translate('Hello, how are you?');
+// → 'こんにちは、お元気ですか？'</code></pre>
+
+        <h3><code>translator.translateStreaming(text)</code></h3>
+        <p>翻訳結果を<strong>チャンクごとに逐次受け取る</strong>ためのメソッド。長文翻訳で体感速度を上げたいときに有効です。</p>
+        <ul>
+          <li><strong>引数</strong>: <code>text: string</code></li>
+          <li><strong>戻り値</strong>: <code>ReadableStream&lt;string&gt;</code>（async iterable）。<code>for await (const chunk of stream) { ... }</code> で逐次消費できます。</li>
+        </ul>
+
+        <h3>📡 <code>downloadprogress</code> イベント</h3>
+        <p><code>monitor</code> コールバック内で購読するイベント。モデルダウンロード中に繰り返し発火します。</p>
+        <ul>
+          <li><strong>イベントプロパティ</strong>:
+            <ul>
+              <li><code>e.loaded: number</code> — 進捗率（0〜1）。0.5 なら 50%。</li>
+            </ul>
+          </li>
+          <li>ダウンロードが完了するとイベント発火は止まり、<code>create()</code> の Promise が解決します。</li>
+        </ul>
+
+        <div class="callout">
+          💡 <strong>ペアごとにインスタンスを持つ</strong>: en→ja と ja→en は別々の <code>Translator</code> インスタンスです。両方向翻訳したいアプリでは、2 つのインスタンスを作って管理します。
+        </div>
+
+        <div class="step">
+          <h3>🌱 STEP 1: 最小動作（4 分）</h3>
+          <p><strong>やること:</strong> source/target を指定して翻訳する。</p>
+<pre><code>// TODO 2: セッション作成
+const translator = await Translator.create({ sourceLanguage, targetLanguage });
+
+// TODO 3: 翻訳実行
+const translated = await translator.translate(text);
+renderOutput('chapter-2', translated);</code></pre>
+          <p><strong>期待:</strong> 初回は数秒〜数十秒（モデル DL）、2 回目以降は即座に翻訳完了。</p>
+        </div>
+
+        <div class="step">
+          <h3>🌿 STEP 2: ダウンロード進捗を可視化（3 分）</h3>
+          <p><strong>やること:</strong> <code>monitor</code> オプションで <code>downloadprogress</code> イベントを購読し、進捗バーを更新。</p>
+<pre><code>// TODO 1: monitor を定義（downloadprogress を購読）
+const monitor = (m) => {
+  m.addEventListener('downloadprogress', (e) => {
+    showProgress('chapter-2', e.loaded * 100);
+  });
+};
+
+// TODO 2: create に monitor を渡す
+const translator = await Translator.create({
+  sourceLanguage,
+  targetLanguage,
+  monitor,
+});</code></pre>
+          <div class="callout">
+            💡 <code>e.loaded</code> は 0〜1 の進捗率。0.5 なら 50%。<code>e.loaded * 100</code> でパーセント表示できます。
+          </div>
+        </div>
+
+        <div class="step">
+          <h3>🌳 STEP 3: 複数言語ペアを試す（3 分）</h3>
+          <p>UI の source/target セレクトを切り替えて、複数のペアで動作を確認：</p>
+          <ul>
+            <li>en → ja / ja → en</li>
+            <li>fr → ja / ja → fr</li>
+            <li>en → de</li>
+          </ul>
+          <p><strong>気づき:</strong> 新しい言語ペアを初めて使うたびにモデル DL が発生します。同じペアの 2 回目以降は即座。</p>
+        </div>
+
+        <h2>🎨 Extend this!</h2>
+        <ul>
+          <li>逆翻訳で品質チェック（en→ja→en して原文と比較）</li>
+          <li>Language Detector と連携して source を自動判定</li>
+          <li>翻訳結果の音声合成（<code>speechSynthesis</code>）</li>
+          <li><code>translateStreaming()</code> で長文翻訳を逐次出力</li>
+        </ul>
+
+        <div class="checkpoint">
+          <strong>✅ Checkpoint</strong>
+          <ol>
+            <li>en → ja で翻訳結果が出る</li>
+            <li>初めての言語ペアで進捗バーが動く</li>
+            <li>同じ言語ペアの 2 回目は進捗バーが出ない（キャッシュ済み）</li>
+          </ol>
+        </div>
+      </article>
+
+      <article id="ch-3" data-title="📝 Summarizer">
+        <h1>📝 Chapter 3: Summarizer</h1>
+
+        <div class="meta-card">
+          <strong>所要時間:</strong> 10 分 / <strong>難易度:</strong> ⭐️⭐️ / <strong>使う共通ステップ:</strong> ①②③<br>
+          <strong>この章のご褒美:</strong> <code>summarizeStreaming()</code> でリアルタイム出力を体験
+        </div>
+
+        <h2>🎯 ゴール</h2>
+        <p>長文を要約し、type/length オプションと streaming 出力を切り替えて挙動の違いを体感する。</p>
+
+        <h2>📚 API ざっくり紹介</h2>
+        <p>Summarizer は、<strong>入力テキストを短くまとめる</strong>ための専用 API です。汎用の Prompt API でも要約はできますが、Summarizer は「要約に特化して最適化されている」ので、より高速で安定した結果が得られます。</p>
+        <p>出力の形式は 2 つの軸で制御できます：</p>
+        <ul>
+          <li><strong>type</strong>（要約の型）：箇条書き、TL;DR、見出し風など 4 種類</li>
+          <li><strong>length</strong>（長さ）：short / medium / long の 3 段階</li>
+        </ul>
+        <p>また、実行時は一括で結果を受け取る方法（<code>summarize()</code>）と、チャンクごとに逐次受け取る方法（<code>summarizeStreaming()</code>）があります。</p>
+        <p>公式ドキュメント: <a href="https://developer.chrome.com/docs/ai/summarizer-api" target="_blank" rel="noopener">Summarizer API</a></p>
+
+        <h2>📖 API リファレンス</h2>
+
+        <h3><code>Summarizer.availability(options?)</code></h3>
+        <p>Summarizer が使えるかを判定する静的メソッド。</p>
+        <ul>
+          <li><strong>引数</strong>: 省略可。<code>{ type, length, format }</code> を指定してその設定で使えるかを問い合わせることも可能。</li>
+          <li><strong>戻り値</strong>: <code>Promise&lt;string&gt;</code>（4 状態のいずれか）。</li>
+        </ul>
+
+        <h3><code>Summarizer.create(options?)</code></h3>
+        <p>要約セッションを作成します。<strong>作成時にオプションを固定する</strong>のがポイントで、type や length を切り替えたい場合はインスタンスを作り直します。</p>
+        <ul>
+          <li><strong>引数</strong>: オプションオブジェクト（省略可）。
+            <ul>
+              <li><code>type?: 'tl;dr' | 'teaser' | 'key-points' | 'headline'</code> — 要約の型。デフォルトは <code>'key-points'</code>。
+                <ul>
+                  <li><code>'tl;dr'</code> — 超短い一言サマリ</li>
+                  <li><code>'teaser'</code> — 続きを読みたくなる導入文</li>
+                  <li><code>'key-points'</code> — 箇条書きの要点</li>
+                  <li><code>'headline'</code> — ニュース見出し風の一行</li>
+                </ul>
+              </li>
+              <li><code>length?: 'short' | 'medium' | 'long'</code> — 長さのめやす。デフォルトは <code>'short'</code>。</li>
+              <li><code>format?: 'plain-text' | 'markdown'</code> — 出力形式。デフォルトは <code>'markdown'</code>。key-points は Markdown 箇条書きで返る。</li>
+              <li><code>sharedContext?: string</code> — 全ての <code>summarize()</code> 呼び出しに共通する追加文脈（例: 「これらは技術ブログ記事です」）。</li>
+              <li><code>monitor?: (m) =&gt; void</code> — DL 進捗コールバック（Translator と同じ形式）。</li>
+            </ul>
+          </li>
+          <li><strong>戻り値</strong>: <code>Promise&lt;Summarizer&gt;</code></li>
+        </ul>
+
+        <h3><code>summarizer.summarize(text, options?)</code></h3>
+        <p>作成したセッションで実際に要約を実行するメソッド。</p>
+        <ul>
+          <li><strong>引数</strong>:
+            <ul>
+              <li><code>text: string</code>（必須）— 要約したい長文。</li>
+              <li><code>options?: { context?: string, signal?: AbortSignal }</code> — この呼び出し限定の追加文脈やキャンセルシグナル。</li>
+            </ul>
+          </li>
+          <li><strong>戻り値</strong>: <code>Promise&lt;string&gt;</code> — 要約結果の文字列。<code>format</code> が <code>'markdown'</code> のときは Markdown 記法が含まれます。</li>
+        </ul>
+        <p><strong>戻り値の例（type: 'key-points', length: 'medium'）：</strong></p>
+<pre><code>* Chrome Built-in AI は Gemini Nano をオンデバイスで実行する仕組み
+* サーバー通信不要でプライバシー・遅延・コストに強い
+* Language Detector / Translator / Summarizer / Prompt の 4 API を提供</code></pre>
+
+        <h3><code>summarizer.summarizeStreaming(text, options?)</code></h3>
+        <p>要約結果を<strong>チャンクごとに逐次受け取る</strong>版。ユーザーに「動いている感」を早く伝えたいときに使います。</p>
+        <ul>
+          <li><strong>引数</strong>: <code>summarize()</code> と同じ。</li>
+          <li><strong>戻り値</strong>: <code>ReadableStream&lt;string&gt;</code>。<code>for await (const chunk of stream) { ... }</code> で消費。</li>
+        </ul>
+        <p><strong>典型的な使い方：</strong></p>
+<pre><code>const stream = summarizer.summarizeStreaming(text);
+let acc = '';
+for await (const chunk of stream) {
+  acc += chunk;
+  renderOutput('chapter-3', acc); // 途中経過をどんどん描画
+}</code></pre>
+
+        <div class="callout">
+          💡 <strong>チャンクの粒度</strong>: <code>chunk</code> は数文字〜数十文字ずつ届きます。累積して表示していくことで「タイプライター風」の演出になります。
+        </div>
+
+        <div class="step">
+          <h3>🌱 STEP 1: 最小動作（4 分）</h3>
+<pre><code>// TODO 1: セッション作成
+const summarizer = await Summarizer.create({ type, length });
+
+// TODO 2: 要約実行
+const result = await summarizer.summarize(text);
+renderOutput('chapter-3', result);</code></pre>
+          <p><strong>ヒント:</strong> 入力テキストは 200〜1000 文字くらいが試しやすいです。</p>
+        </div>
+
+        <div class="step">
+          <h3>🌿 STEP 2: type / length を UI と連動（3 分）</h3>
+          <p><strong>type</strong> の選択肢:</p>
+          <ul>
+            <li><code>tl;dr</code> — 超短くまとめ</li>
+            <li><code>teaser</code> — 読みたくさせる導入</li>
+            <li><code>key-points</code> — 箇条書きの要点</li>
+            <li><code>headline</code> — 見出し風の一言</li>
+          </ul>
+          <p><strong>length</strong>: <code>short</code> / <code>medium</code> / <code>long</code></p>
+          <p>UI の select と <code>type</code>/<code>length</code> を連動させ、いくつかの組み合わせを試してみましょう。</p>
+        </div>
+
+        <div class="step">
+          <h3>🌳 STEP 3: Streaming で逐次表示（3 分）</h3>
+<pre><code>// TODO 2 を書き換え
+const stream = summarizer.summarizeStreaming(text);
+let acc = '';
+for await (const chunk of stream) {
+  acc += chunk;
+  renderOutput('chapter-3', acc);
+}</code></pre>
+          <div class="callout">
+            💡 <strong>体感:</strong> 非 streaming だと最後まで待たされますが、streaming は文字が徐々に埋まっていくので体感速度が劇的に上がります。同じ考え方は Chapter 4 の Prompt API でも使えます（<code>promptStreaming()</code>）。
+          </div>
+        </div>
+
+        <h2>🎨 Extend this!</h2>
+        <ul>
+          <li>URL 入力 → <code>fetch</code> で本文取得 → 要約</li>
+          <li>要約結果を Translator で他言語に翻訳</li>
+          <li>複数記事を並列に要約して見出し一覧を作る</li>
+          <li><code>sharedContext</code> オプションで文脈を与える（技術ブログ用など）</li>
+        </ul>
+
+        <div class="checkpoint">
+          <strong>✅ Checkpoint</strong>
+          <ol>
+            <li>type / length の切替で出力が変わる</li>
+            <li>streaming モードで文字が徐々に表示される</li>
+          </ol>
+        </div>
+      </article>
+
+      <article id="ch-4" data-title="💬 Prompt API テキスト">
+        <h1>💬 Chapter 4: Prompt API テキスト — 感情分析＋タグ抽出</h1>
+
+        <div class="meta-card">
+          <strong>所要時間:</strong> 13 分 / <strong>難易度:</strong> ⭐️⭐️⭐️ / <strong>使う共通ステップ:</strong> ①②③<br>
+          <strong>この章のご褒美:</strong> 「LLM を関数として使う」感覚 — <code>responseConstraint</code> で JSON 強制
+        </div>
+
+        <h2>🎯 ゴール</h2>
+        <p>レビュー文を入力すると、<code>{ sentiment, score, tags, summary }</code> という決まった形の JSON で返す。</p>
+
+        <h2>📚 API ざっくり紹介</h2>
+        <p>Prompt API（グローバル名は <code>LanguageModel</code>）は、他の 3 つの API と違って<strong>「これに特化した機能」がなく、汎用的な LLM 呼び出しインターフェイス</strong>です。プロンプトを書いて自由な出力を得たり、JSON Schema で出力形式を縛ったりできます。</p>
+        <p>Chrome Built-in AI の中で最も柔軟で、他 3 API では対応できないタスク（分類・抽出・生成・変換など）はすべてこの API で実現します。</p>
+        <p><strong>主な機能：</strong></p>
+        <ul>
+          <li><strong>チャット形式のセッション管理</strong>（system / user / assistant ロール、会話履歴保持）</li>
+          <li><strong>structured output</strong>（<code>responseConstraint</code> で JSON 形式を強制）</li>
+          <li><strong>マルチモーダル入力</strong>（画像・音声も投入可能、Chapter 5 で扱う）</li>
+          <li><strong>ストリーミング</strong>（<code>promptStreaming()</code>）</li>
+          <li><strong>パラメータ制御</strong>（<code>temperature</code>, <code>topK</code>）</li>
+        </ul>
+        <p>公式ドキュメント: <a href="https://developer.chrome.com/docs/ai/prompt-api" target="_blank" rel="noopener">Prompt API</a></p>
+
+        <h2>📖 API リファレンス</h2>
+
+        <h3><code>LanguageModel.availability(options?)</code></h3>
+        <p>Prompt API が使えるかを判定する静的メソッド。マルチモーダル対応の可否も含めて確認できます。</p>
+        <ul>
+          <li><strong>引数</strong>: 省略可。<code>{ expectedInputs?: [{ type: 'image' | 'audio' }] }</code> を渡すことで、マルチモーダル入力が使える環境かを判定できます（Chapter 5 で使用）。</li>
+          <li><strong>戻り値</strong>: <code>Promise&lt;string&gt;</code>（4 状態のいずれか）。</li>
+        </ul>
+
+        <h3><code>LanguageModel.params()</code></h3>
+        <p>モデルのデフォルトパラメータや上限を取得します。UI で temperature スライダの上限を動的に決めたいときなどに便利。</p>
+        <ul>
+          <li><strong>引数</strong>: なし</li>
+          <li><strong>戻り値</strong>: <code>Promise&lt;{ defaultTopK, maxTopK, defaultTemperature, maxTemperature }&gt;</code></li>
+        </ul>
+
+        <h3><code>LanguageModel.create(options?)</code></h3>
+        <p>会話セッションを作成します。<strong>「セッション」という概念が重要</strong>で、同じセッションに複数回 <code>prompt()</code> すると、過去のやりとりを踏まえた応答になります（マルチターン会話）。</p>
+        <ul>
+          <li><strong>引数</strong>: オプションオブジェクト（省略可）。
+            <ul>
+              <li><code>initialPrompts?: Array&lt;{ role: 'system' | 'user' | 'assistant', content: string }&gt;</code> — セッション開始時のプロンプト群。<code>role: 'system'</code> でモデルの役割を定義したり、user/assistant ペアで few-shot 例を仕込んだりします。</li>
+              <li><code>temperature?: number</code> — 0（保守的・決定論的）〜 上限値（創造的・多様）。デフォルトは <code>LanguageModel.params()</code> の <code>defaultTemperature</code>。</li>
+              <li><code>topK?: number</code> — サンプリングの多様性制御。小さいほど確定的、大きいほど多様。</li>
+              <li><code>expectedInputs?: [{ type: 'image' | 'audio' }]</code> — マルチモーダル入力を使うときに宣言（Chapter 5）。</li>
+              <li><code>monitor?: (m) =&gt; void</code> — DL 進捗コールバック。</li>
+              <li><code>signal?: AbortSignal</code> — 作成キャンセル用。</li>
+            </ul>
+          </li>
+          <li><strong>戻り値</strong>: <code>Promise&lt;LanguageModel&gt;</code>（セッションインスタンス）。</li>
+        </ul>
+
+        <h3><code>session.prompt(input, options?)</code></h3>
+        <p>セッションにプロンプトを投げて応答を得る、最も基本のメソッド。</p>
+        <ul>
+          <li><strong>引数</strong>:
+            <ul>
+              <li><code>input</code>: 2 通りの形式が使えます。
+                <ul>
+                  <li><strong>単純な文字列</strong>: <code>await session.prompt('こんにちは')</code></li>
+                  <li><strong>メッセージ配列</strong>: <code>await session.prompt([{ role: 'user', content: [...] }])</code> — 複雑な入力（マルチモーダル含む）のとき使用</li>
+                </ul>
+              </li>
+              <li><code>options?</code>:
+                <ul>
+                  <li><code>responseConstraint?: object</code> — <strong>JSON Schema オブジェクト</strong>。出力を指定形式に強制する（この章の目玉機能）。</li>
+                  <li><code>signal?: AbortSignal</code> — 呼び出しキャンセル用。</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><strong>戻り値</strong>: <code>Promise&lt;string&gt;</code> — <strong>常に文字列</strong>。<code>responseConstraint</code> を使った場合も文字列で返るので、<code>JSON.parse(output)</code> でオブジェクトに変換する必要があります。</li>
+        </ul>
+        <p><strong>戻り値の例（responseConstraint あり）：</strong></p>
+<pre><code>// prompt() が返す文字列（JSON として parse できる形）
+'{"sentiment":"positive","score":0.85,"tags":["軽量","持ち運び"],"summary":"軽くて持ち運びに便利なカメラ"}'
+
+// JSON.parse すると:
+{
+  sentiment: 'positive',
+  score: 0.85,
+  tags: ['軽量', '持ち運び'],
+  summary: '軽くて持ち運びに便利なカメラ',
+}</code></pre>
+
+        <h3><code>session.promptStreaming(input, options?)</code></h3>
+        <p>応答を逐次受け取るストリーミング版。長い応答を待たせずに表示したいときに使用。</p>
+        <ul>
+          <li><strong>引数</strong>: <code>prompt()</code> と同じ。</li>
+          <li><strong>戻り値</strong>: <code>ReadableStream&lt;string&gt;</code>。<code>for await</code> で消費。</li>
+        </ul>
+
+        <h3><code>session.clone(options?)</code></h3>
+        <p>現在のセッション状態を保ったままコピーを作成します。「同じ初期プロンプトから複数の分岐会話を試したい」ときに便利。</p>
+
+        <h3><code>session.destroy()</code></h3>
+        <p>セッションを破棄してリソースを解放します。</p>
+
+        <h3>📊 セッションの状態プロパティ</h3>
+        <ul>
+          <li><code>session.inputUsage</code> — 現時点で使用したトークン数</li>
+          <li><code>session.inputQuota</code> — セッションの入力トークン上限</li>
+          <li><code>session.temperature</code>, <code>session.topK</code> — 作成時のパラメータ値</li>
+        </ul>
+        <p>上限が近くなったら <code>destroy()</code> して新しいセッションを作り直す、といった管理に使えます。</p>
+
+        <div class="callout">
+          💡 <strong>session と prompt の関係</strong>: 1 セッションに複数 prompt を投げると<strong>履歴が積み上がっていく</strong>。単発の分析タスクなら都度セッションを作って捨てるのが安全。<br>
+          チャット UI では 1 セッションを保持し続けます（履歴の恩恵を活かす）。
+        </div>
+
+        <h2>📋 使う JSON Schema</h2>
+        <p><code>lib/schema.js</code> に既に定義済みです。<code>SENTIMENT_SCHEMA</code> は <code>main.js</code> の先頭で import 済み：</p>
+<pre><code>import { SENTIMENT_SCHEMA, BUSINESS_CARD_SCHEMA } from './lib/schema.js';
+
+// SENTIMENT_SCHEMA の中身（抜粋）:
+// {
+//   type: 'object',
+//   properties: {
+//     sentiment: { type: 'string', enum: ['positive', 'neutral', 'negative'] },
+//     score: { type: 'number', minimum: -1, maximum: 1 },
+//     tags: { type: 'array', items: { type: 'string' }, maxItems: 5 },
+//     summary: { type: 'string' },
+//   },
+//   required: ['sentiment', 'score', 'tags', 'summary'],
+// }</code></pre>
+
+        <div class="step">
+          <h3>🌱 STEP 1: 自由応答で会話（4 分）</h3>
+<pre><code>// TODO 1: セッション作成（system prompt 付き）
+const session = await LanguageModel.create({
+  initialPrompts: [{ role: 'system', content: systemPrompt }],
+});
+
+// TODO 2 & 3: 実行して表示
+const output = await session.prompt(reviewText);
+renderOutput('chapter-4', output);</code></pre>
+          <p><strong>気づき:</strong> このままだと出力形式が毎回バラつきます。文章の場合もあれば、Markdown 混じりの場合も。次の STEP で「関数化」します。</p>
+        </div>
+
+        <div class="step">
+          <h3>🌿 STEP 2: JSON Schema で強制（5 分）— この章の目玉 ✨</h3>
+<pre><code>// TODO 2 を書き換え
+const output = await session.prompt(reviewText, {
+  responseConstraint: SENTIMENT_SCHEMA,
+});
+
+// TODO 3: JSON.parse して構造化表示
+renderOutput('chapter-4', JSON.parse(output));</code></pre>
+          <div class="callout">
+            💡 <strong>体験:</strong> 何度実行しても常に同じキーの JSON が返ります。バリデーションのプリミティブとして超便利。<br>
+            この機能があるおかげで、LLM の出力を確定的にプログラムから扱えます。
+          </div>
+        </div>
+
+        <div class="step">
+          <h3>🌳 STEP 3: temperature / topK でチューニング（4 分）</h3>
+<pre><code>const session = await LanguageModel.create({
+  initialPrompts: [{ role: 'system', content: systemPrompt }],
+  temperature,   // 0（保守的）〜 2（創造的）
+  topK: 3,       // サンプリングの多様性
+});</code></pre>
+          <p>UI のスライダで temperature を変えながら、同じレビュー文を複数回実行してみましょう。<code>tags</code> や <code>summary</code> の揺らぎ方が変わります。</p>
+          <ul>
+            <li><code>temperature=0</code> → 毎回ほぼ同じ結果（決定論的）</li>
+            <li><code>temperature=1.5</code> → 毎回違うタグが出てくる（多様性）</li>
+          </ul>
+        </div>
+
+        <h2>🎨 Extend this!</h2>
+        <ul>
+          <li>複数レビューをまとめて分析（1 セッションで複数 prompt を投げる）</li>
+          <li>過去の会話を保持したチャット UI に発展</li>
+          <li>tags を集計してタグクラウド表示</li>
+          <li>Schema をカスタマイズ（例: <code>emojis</code> フィールドを追加して感情絵文字を返させる）</li>
+        </ul>
+
+        <div class="checkpoint">
+          <strong>✅ Checkpoint</strong>
+          <ol>
+            <li>ポジティブなレビューで sentiment: positive, score が高くなる</li>
+            <li>ネガティブなレビューで sentiment: negative, score が低くなる</li>
+            <li>tags に短いキーワードが 3〜5 個含まれる</li>
+            <li>常に有効な JSON が返る（parse エラーなし）</li>
+          </ol>
+        </div>
+      </article>
+
+      <article id="ch-5" data-title="📷 Prompt API 画像">
+        <h1>📷 Chapter 5: Prompt API 画像 — 名刺 OCR</h1>
+
+        <div class="meta-card">
+          <strong>所要時間:</strong> 10 分 / <strong>難易度:</strong> ⭐️⭐️⭐️ / <strong>使う共通ステップ:</strong> ①②③<br>
+          <strong>この章のご褒美:</strong> マルチモーダル × structured output の合わせ技
+        </div>
+
+        <h2>🎯 ゴール</h2>
+        <p>名刺画像を入力すると、<code>{ name, company, title, email, phone, address, website }</code> の連絡先データを JSON で抽出する。</p>
+
+        <h2>📚 API ざっくり紹介</h2>
+        <p>Chapter 4 で扱った Prompt API（<code>LanguageModel</code>）と<strong>同じ API を、画像入力モードで使う</strong>のがこの章のポイントです。新しい API を覚える必要はなく、<strong>2 箇所の差分</strong>だけ理解すれば OK。</p>
+        <ol>
+          <li><code>LanguageModel.create()</code> のときに <code>expectedInputs: [{ type: 'image' }]</code> を宣言する</li>
+          <li><code>session.prompt()</code> の入力に画像 Blob と指示テキストを配列で渡す</li>
+        </ol>
+        <p>これだけで、モデルは画像を「見て」、その内容についてテキストで返答できるようになります。従来の OCR エンジンより高度で、単に文字を抜き出すだけでなく「この画像は名刺で、これが役職欄で…」といった<strong>意味的な理解</strong>が可能です。</p>
+
+        <h2>📖 API リファレンス（Chapter 4 との差分）</h2>
+
+        <h3>マルチモーダル対応の <code>availability</code> 判定</h3>
+<pre><code>await LanguageModel.availability({
+  expectedInputs: [{ type: 'image' }],
+});
+// → 'available' | 'downloadable' | ...</code></pre>
+        <p><code>expectedInputs</code> を渡さない場合はテキスト用途としての可否を返します。画像対応の可否は明示的に問い合わせる必要があります。</p>
+
+        <h3><code>LanguageModel.create({ expectedInputs: [...] })</code></h3>
+        <p>マルチモーダルセッションを作る際は <code>expectedInputs</code> オプションで<strong>どの型の入力を受け付けるか</strong>を宣言します。</p>
+        <ul>
+          <li><strong>expectedInputs</strong>: <code>Array&lt;{ type: 'text' | 'image' | 'audio' }&gt;</code>
+            <ul>
+              <li><code>[{ type: 'image' }]</code> — 画像入力のみ</li>
+              <li><code>[{ type: 'image' }, { type: 'audio' }]</code> — 両方受け付け（環境が対応している場合）</li>
+              <li>宣言しなかった型を <code>prompt()</code> に渡すとエラーになります。</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h3>マルチモーダルな <code>session.prompt(input, options?)</code></h3>
+        <p><strong>入力は必ずメッセージ配列形式</strong>で、<code>content</code> を配列にして <code>image</code> と <code>text</code> のパーツを並べます。</p>
+        <ul>
+          <li><strong>引数の型</strong>:
+<pre><code>input: [{
+  role: 'user',
+  content: Array&lt;
+    | { type: 'text',  value: string }
+    | { type: 'image', value: Blob | ImageBitmap | HTMLImageElement | HTMLCanvasElement | ... }
+  &gt;
+}]</code></pre>
+          </li>
+          <li><strong>image の value に渡せるもの</strong>:
+            <ul>
+              <li><code>Blob</code> / <code>File</code> — file input や fetch から取得したもの（この章で使用）</li>
+              <li><code>ImageBitmap</code> — <code>createImageBitmap()</code> の結果</li>
+              <li><code>HTMLImageElement</code> — <code>&lt;img&gt;</code> 要素</li>
+              <li><code>HTMLCanvasElement</code>, <code>OffscreenCanvas</code> — canvas 由来</li>
+              <li><code>HTMLVideoElement</code> — video の現フレーム</li>
+            </ul>
+          </li>
+          <li><strong>content の順序</strong>: 画像を先、テキスト指示を後ろに置くのが推奨（画像を見せてから指示を出す形）。</li>
+          <li><strong>戻り値</strong>: <code>Promise&lt;string&gt;</code>（テキストと同じ）。<code>responseConstraint</code> と組み合わせれば JSON 強制も可能。</li>
+        </ul>
+        <p><strong>典型的な呼び出し：</strong></p>
+<pre><code>const output = await session.prompt([{
+  role: 'user',
+  content: [
+    { type: 'image', value: imageBlob },
+    { type: 'text',  value: 'この画像から名刺情報を JSON で抽出してください。' },
+  ],
+}], {
+  responseConstraint: BUSINESS_CARD_SCHEMA,
+});
+
+const contact = JSON.parse(output);
+// { name: '山田太郎', company: 'サンプル株式会社', ... }</code></pre>
+
+        <div class="callout">
+          💡 <strong>画像入力のコツ</strong>：
+          <ul>
+            <li>解像度が低すぎる画像は読み取れない（推奨は幅 800px 以上）</li>
+            <li>斜めや歪みが強いと精度が落ちる — 事前にトリミングしてから渡すと良い</li>
+            <li>複数画像を一度に渡すこともできる（<code>content</code> 配列に image を 2 つ以上並べる）</li>
+          </ul>
+        </div>
+
+        <h2>📋 使う JSON Schema</h2>
+        <p><code>lib/schema.js</code> の <code>BUSINESS_CARD_SCHEMA</code> を使います（Chapter 4 と一緒に import 済み）。</p>
+<pre><code>// BUSINESS_CARD_SCHEMA の中身（抜粋）:
+// {
+//   type: 'object',
+//   properties: {
+//     name:    { type: 'string' },
+//     company: { type: 'string' },
+//     title:   { type: 'string' },
+//     email:   { type: 'string' },
+//     phone:   { type: 'array', items: { type: 'string' } },
+//     address: { type: 'string' },
+//     website: { type: 'string' },
+//   },
+//   required: ['name', 'company'],
+// }</code></pre>
+
+        <div class="step">
+          <h3>🌱 STEP 1: マルチモーダルセッションを作る（4 分）</h3>
+<pre><code>// TODO 1: 画像入力対応のセッション作成
+const session = await LanguageModel.create({
+  expectedInputs: [{ type: 'image' }],
+});</code></pre>
+          <div class="callout">
+            💡 <code>expectedInputs</code> を宣言しないと画像を渡してもエラーになります。必ず作成時に image を宣言してください。
+          </div>
+        </div>
+
+        <div class="step">
+          <h3>🌿 STEP 2: 画像 + 指示を送る（3 分）</h3>
+<pre><code>// TODO 2: 画像 Blob と指示テキストを prompt に渡す
+const output = await session.prompt([{
+  role: 'user',
+  content: [
+    { type: 'image', value: currentImageBlob },
+    { type: 'text', value: 'この名刺から連絡先情報を JSON で抽出してください。' },
+  ],
+}]);</code></pre>
+          <p><strong>ポイント:</strong> content 配列に image と text を混ぜて渡します。順序は <code>image → text</code> が推奨（画像を先に見せてから指示を出す）。</p>
+        </div>
+
+        <div class="step">
+          <h3>🌳 STEP 3: Schema で強制 + 整形表示（3 分）</h3>
+<pre><code>// prompt に responseConstraint を追加
+const output = await session.prompt([{
+  role: 'user',
+  content: [
+    { type: 'image', value: currentImageBlob },
+    { type: 'text', value: 'この名刺から連絡先情報を JSON で抽出してください。' },
+  ],
+}], {
+  responseConstraint: BUSINESS_CARD_SCHEMA,
+});
+
+// TODO 3: JSON.parse して表示
+renderOutput('chapter-5', JSON.parse(output));</code></pre>
+          <p>これで Chapter 4 と同じく、確実に JSON 形式で返ってきます。</p>
+        </div>
+
+        <h2>🎨 Extend this!</h2>
+        <ul>
+          <li>レシート OCR に切替（金額・品目を抽出、Schema を差し替えるだけ）</li>
+          <li>手書きメモの文字起こし</li>
+          <li>抽出結果をカレンダー / 連絡先アプリと連携（Chrome 拡張機能化）</li>
+          <li>複数画像を一度に送って比較する</li>
+        </ul>
+
+        <div class="checkpoint">
+          <strong>✅ Checkpoint</strong>
+          <ol>
+            <li>同梱のサンプル画像で <code>{ name, company, ... }</code> が返る</li>
+            <li>自分の名刺（もしくは別の名刺画像）でも試して結果が変わる</li>
+            <li>JSON.parse エラーが出ない（常に有効な JSON）</li>
+          </ol>
+        </div>
+      </article>
+
+      <article id="ch-6" data-title="🎨 拡張タイム＆Q&A">
+        <h1>🎨 Chapter 6: 拡張タイム＆Q&A</h1>
+
+        <div class="meta-card">
+          <strong>所要時間:</strong> 5 分 / <strong>目的:</strong> 自分のアイデアを乗せてみる
+        </div>
+
+        <h2>🌱 章ごとの拡張アイデア</h2>
+        <ul>
+          <li>🔤 <strong>Language Detector</strong>: リアルタイム判定、絵文字フラッグ表示、Detector 結果を Translator に自動投入</li>
+          <li>🌐 <strong>Translator</strong>: 逆翻訳品質チェック、音声合成、複数言語同時出力、<code>translateStreaming()</code> で逐次出力</li>
+          <li>📝 <strong>Summarizer</strong>: URL 記事の要約、複数記事の比較要約、多言語要約</li>
+          <li>💬 <strong>Prompt API テキスト</strong>: マルチターン会話、タグクラウド、複数レビューまとめ</li>
+          <li>📷 <strong>Prompt API 画像</strong>: レシート版、手書きメモ版、画像 + テキスト混在資料の抽出</li>
+        </ul>
+
+        <h2>🚀 API 連携アイデア</h2>
+        <p>順序依存にはしていませんが、章同士を連携すると強力なアプリになります：</p>
+        <ol>
+          <li><strong>多言語ブラウザ内リーダー</strong>: Detector → Translator → Summarizer → Prompt でフォローアップ Q&A</li>
+          <li><strong>多言語カスタマーサポート下書き</strong>: Detector → Translator → Summarizer → Prompt で返信ドラフト → Translator で戻す</li>
+          <li><strong>スマホカメラで名刺 → 挨拶メール自動生成</strong>: Ch5 の抽出結果を Prompt に渡してテンプレメール生成 → Translator で英訳</li>
+          <li><strong>ブログ多言語化パイプライン</strong>: 日本語で書く → Summarizer で TL;DR 生成 → Translator で各言語に翻訳 → Prompt で SNS 投稿文を各言語で生成</li>
+        </ol>
+
+        <h2>🎁 持ち帰り課題</h2>
+        <p>会場では時間が限られるので、以下は自宅で挑戦してみてください：</p>
+        <ul>
+          <li><strong>Chrome Extension 化</strong>（Content Script でページ内テキストを扱う）</li>
+          <li>Chapter 4 と 5 を組み合わせた「画像 + テキスト混在資料」の解析</li>
+          <li>自分の業務で使えるツールとしてリファクタ</li>
+          <li>PWA 化してモバイルでも使えるように</li>
+        </ul>
+
+        <h2>💡 発表しよう！</h2>
+        <p>拡張したものを SNS でシェアするときは、以下のハッシュタグをぜひ〜：</p>
+        <ul>
+          <li><code>#ChromeBuiltInAI</code></li>
+          <li><code>#IOExtendedTokyo</code></li>
+          <li><code>#GeminiNano</code></li>
+        </ul>
+
+        <h2>📚 さらに学ぶ</h2>
+        <ul>
+          <li><a href="https://developer.chrome.com/docs/ai/built-in" target="_blank" rel="noopener">Chrome Built-in AI 公式ドキュメント</a></li>
+          <li><a href="https://developer.chrome.com/docs/ai/prompt-api" target="_blank" rel="noopener">Prompt API 詳細</a></li>
+          <li><a href="https://developer.chrome.com/docs/ai/language-detection" target="_blank" rel="noopener">Language Detection API</a></li>
+          <li><a href="https://developer.chrome.com/docs/ai/translator-api" target="_blank" rel="noopener">Translator API</a></li>
+          <li><a href="https://developer.chrome.com/docs/ai/summarizer-api" target="_blank" rel="noopener">Summarizer API</a></li>
+        </ul>
+
+        <h2>🎤 質問タイム</h2>
+        <p>疑問点は会場スタッフか、Slack / Discord チャンネル（会場でご案内）まで。</p>
+
+        <div class="checkpoint">
+          <strong>🎊 お疲れさまでした！</strong><br>
+          Chrome Built-in AI の 4 API を全部触った経験、めちゃくちゃ貴重です。
+          ここから先はあなたのアイデア次第。世界を驚かせる Web AI アプリを作ってください 🚀
+        </div>
+      </article>
+    </main>
+  </div>
+
+  <script type="module" src="docs.js"></script>
+</body>
+</html>

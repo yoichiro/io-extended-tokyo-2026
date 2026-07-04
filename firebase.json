@@ -1,0 +1,30 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "starter/**",
+      "solutions/**",
+      "docs/**",
+      "README.md",
+      "LICENSE",
+      ".firebaserc"
+    ],
+    "rewrites": [
+      { "source": "/", "destination": "/docs-site/index.html" },
+      { "source": "/staff", "destination": "/event-materials/index.html" },
+      { "source": "/staff/", "destination": "/event-materials/index.html" }
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(js|css|html|md|png|jpg|svg)",
+        "headers": [
+          { "key": "Cache-Control", "value": "public, max-age=3600" }
+        ]
+      }
+    ],
+    "cleanUrls": true
+  }
+}

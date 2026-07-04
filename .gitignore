@@ -1,0 +1,10 @@
+.DS_Store
+node_modules/
+.vscode/
+.idea/
+*.log
+
+# Firebase local cache
+.firebase/
+firebase-debug.log
+firebase-debug.*.log

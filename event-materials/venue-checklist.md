@@ -8,7 +8,7 @@
 ## 🕐 前日夜（〜24 時間前）
 
 ### 環境検証
-- [ ] Chrome Canary の**最新版**を新規インストールし、全 5 API が `available` になることを確認
+- [ ] Chrome の**最新 Stable 版（148 以降）**を新規プロファイルで確認し、全 5 API が `available` になることを確認
 - [ ] スターター配布 URL（GitHub Pages / Firebase Hosting）が公開されている
 - [ ] Codelab サイト URL が公開されている
 - [ ] スターター全 5 章が solutions を組み込んだ状態で動作する
@@ -35,7 +35,7 @@
 ## 🌅 当日朝（開始 3 時間前）
 
 - [ ] 会場 Wi-Fi 接続を確認、スターター URL がロードできる
-- [ ] `about://on-device-internals` で Chrome Canary のモデル状態確認
+- [ ] `about://on-device-internals` で Chrome Stable の Gemini Nano モデル状態確認
 - [ ] Chapter 1〜5 を予備 PC で動作確認（Wi-Fi 経由）
 - [ ] プロジェクタで解説サイトを映し、後方席から視認できるか確認
 - [ ] メンターへチートシートを配布し、当日質問対応の役割分担を確認
@@ -96,7 +96,7 @@
 1. 予備 PC の代替配布は諦め、代わりに **solutions を直接見せて概念だけ理解してもらう**モードに切替
 2. スターター URL がロードできない場合、事前にダウンロードした ZIP をローカル配布
 
-### ケース2: Chrome Canary で API 仕様変更が発覚
+### ケース2: Chrome の新バージョンリリースで API 仕様変更が発覚
 1. 前日夜または当日朝に発覚した場合、solutions/main.js を緊急修正
 2. session 中に発覚した場合、Codelab サイトの該当箇所に注記追加
 3. 参加者には「今日は概念中心に、詳細は後日修正版で」と説明

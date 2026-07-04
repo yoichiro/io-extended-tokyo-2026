@@ -8,8 +8,8 @@ Chrome Built-in AI（Gemini Nano をオンデバイスで使う仕組み）の 4
 
 | URL | 内容 |
 |-----|------|
-| [https://REPLACE_WITH_YOUR_PROJECT.web.app/](https://REPLACE_WITH_YOUR_PROJECT.web.app/) | 📚 Codelab（参加者向け解説サイト） |
-| [https://REPLACE_WITH_YOUR_PROJECT.web.app/staff/](https://REPLACE_WITH_YOUR_PROJECT.web.app/staff/) | 🎪 会場運営資料（スタッフ・メンター向け） |
+| [https://io-extended-tokyo-2026.web.app/](https://io-extended-tokyo-2026.web.app/) | 📚 Codelab（参加者向け解説サイト） |
+| [https://io-extended-tokyo-2026.web.app/staff/](https://io-extended-tokyo-2026.web.app/staff/) | 🎪 会場運営資料（スタッフ・メンター向け） |
 
 ## 📁 ディレクトリ構成
 
@@ -34,10 +34,10 @@ io-extended-tokyo-2026/
 4. Codelab の指示に沿って 5 章のミニデモを進めてください
 
 ```bash
-git clone https://github.com/REPLACE_WITH_YOUR_USER/io-extended-tokyo-2026-minilab.git
-cd io-extended-tokyo-2026-minilab
+git clone https://github.com/yoichiro/io-extended-tokyo-2026.git
+cd io-extended-tokyo-2026
 python3 -m http.server 8000
-# → http://localhost:8000/starter/index.html を Chrome Canary で開く
+# → http://localhost:8000/starter/index.html を Chrome 148 以降で開く
 ```
 
 参加前の環境準備は [starter/README.md](./starter/README.md) をご確認ください。

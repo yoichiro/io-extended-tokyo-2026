@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Chrome Built-in AI 60分ミニラボ — Codelab</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="/docs-site/styles.css">
 </head>
 <body>
   <div class="layout">
@@ -21,21 +21,49 @@
         <h1>🏁 Chapter 0: 導入・環境チェック</h1>
 
         <div class="meta-card">
-          <strong>所要時間:</strong> 8 分 / <strong>必修</strong><br>
-          <strong>この章のゴール:</strong> 全 API の共通パターンを理解し、環境が使えることを確認する
+          <strong>所要時間:</strong> 10 分 / <strong>必修</strong><br>
+          <strong>この章のゴール:</strong> スターターコードを取得してローカルで起動し、全 API の共通パターンを理解し、環境が使えることを確認する
         </div>
 
         <h2>📚 Chrome Built-in AI とは？</h2>
         <p>Chrome 内蔵の <strong>Gemini Nano</strong> モデルを使い、サーバー通信なしにブラウザ内で LLM 推論を実行できる仕組みです。プライバシー・遅延・コストの面で強力な利点があります。</p>
+        <p>今回扱う 4 つの API（Language Detector / Translator / Summarizer / Prompt API）は、いずれも <strong>Chrome 148 Stable から標準搭載</strong>されており、フラグ設定なしで使えます。Chrome を最新版に更新するだけで OK です 🎉</p>
 
         <h2>🎯 5 つの API</h2>
         <ul>
           <li>🔤 <strong>Language Detector</strong> — テキストの言語を判定</li>
           <li>🌐 <strong>Translator</strong> — 多言語翻訳</li>
           <li>📝 <strong>Summarizer</strong> — 長文の要約</li>
-          <li>💬 <strong>Prompt API（テキスト）</strong> — 汎用 LLM（構造化出力対応）</li>
+          <li>💬 <strong>Prompt API（テキスト）</strong> — 汎用 LLM（構造化出力対応)</li>
           <li>📷 <strong>Prompt API（画像）</strong> — マルチモーダル入力</li>
         </ul>
+
+        <h2>🚀 スターターを取得しよう</h2>
+        <p>コードを書き始める前に、スターターキット（HTML/CSS/JS の骨格＋TODO コメント付き）をローカルに用意しましょう。</p>
+
+        <h3>方法 A: git clone（推奨）</h3>
+<pre><code>git clone https://github.com/yoichiro/io-extended-tokyo-2026.git
+cd io-extended-tokyo-2026</code></pre>
+
+        <h3>方法 B: ZIP ダウンロード</h3>
+        <p>git を使わない方は、<a href="https://github.com/yoichiro/io-extended-tokyo-2026/releases/latest" target="_blank" rel="noopener">GitHub Releases</a> から最新の ZIP をダウンロードし、任意の場所に展開してください。</p>
+
+        <h3>ローカルサーバを起動</h3>
+        <p>ブラウザで <code>file://</code> プロトコル直接開くと ES module の CORS エラーが出るので、軽量ローカルサーバを立ち上げます。プロジェクトのルートで実行してください：</p>
+<pre><code># python3 の場合（推奨、追加インストール不要）
+python3 -m http.server 8000
+
+# Node.js が入っている方は
+npx -y serve</code></pre>
+
+        <h3>ブラウザで開く</h3>
+        <p><strong>Chrome 148 以降</strong>で以下の URL を開きます：</p>
+<pre><code>http://localhost:8000/starter/index.html</code></pre>
+        <p>ヘッダにある 5 つの環境バッジが <strong>すべて <code>✅ available</code></strong> になっていれば準備完了です！🎉</p>
+
+        <div class="callout">
+          💡 バッジに <code>⬇ downloadable</code> が残っている場合は、まだ Gemini Nano のモデルダウンロードが済んでいません。事前アナウンスの動作確認スニペットを再度実行してダウンロードを完了させてください。
+        </div>
 
         <h2>🧭 共通の 3 ステップパターン</h2>
         <p>全 API は同じ 3 ステップで呼び出せます：</p>
@@ -51,7 +79,7 @@ const result = await session.someMethod(input);</code></pre>
 
         <h2>🚦 availability の 4 状態</h2>
         <ul>
-          <li><code>unavailable</code> — 環境が対応していない（OS/フラグ/ハードウェア要件を満たさず）</li>
+          <li><code>unavailable</code> — 環境が対応していない（Chrome バージョン不足・OS/ハードウェア要件不足など）</li>
           <li><code>downloadable</code> — 使えるが、モデルのダウンロードがまだ</li>
           <li><code>downloading</code> — 現在ダウンロード中</li>
           <li><code>available</code> — すぐ使える状態 ✅</li>
@@ -64,9 +92,10 @@ const result = await session.someMethod(input);</code></pre>
         <div class="checkpoint">
           <strong>✅ Checkpoint</strong>
           <ol>
-            <li>スターターの <code>index.html</code> をブラウザで開いた</li>
-            <li>ヘッダの環境バッジがすべて <code>✅ available</code> になっている</li>
-            <li>まだの API があれば、そのバッジ状態を確認し、必要ならモデル DL を開始した</li>
+            <li>スターターを clone or ZIP でローカルに取得した</li>
+            <li>ローカルサーバを起動し、<code>http://localhost:8000/starter/index.html</code> を Chrome 148 以降で開いた</li>
+            <li>ヘッダの環境バッジが <strong>すべて <code>✅ available</code></strong> になっている</li>
+            <li>共通の 3 ステップパターン（<code>availability</code> → <code>create</code> → 実行）と、availability の 4 状態を理解した</li>
           </ol>
         </div>
 
@@ -99,7 +128,7 @@ const result = await session.someMethod(input);</code></pre>
           <li><strong>引数</strong>: 省略可。特定言語だけを判定対象にしたい場合は <code>{ expectedInputLanguages: ['en', 'ja', ...] }</code> を渡すことで、その言語ペアが使えるかを判定できます。</li>
           <li><strong>戻り値</strong>: <code>Promise&lt;string&gt;</code>。以下 4 状態のいずれかが返ります。
             <ul>
-              <li><code>'unavailable'</code> — 環境非対応（フラグ未設定・OS要件不足など）</li>
+              <li><code>'unavailable'</code> — 環境非対応（Chrome バージョン不足・OS 要件不足など）</li>
               <li><code>'downloadable'</code> — 使えるが、モデル未ダウンロード</li>
               <li><code>'downloading'</code> — 現在ダウンロード中</li>
               <li><code>'available'</code> — すぐ使える ✅</li>
@@ -894,6 +923,6 @@ renderOutput('chapter-5', JSON.parse(output));</code></pre>
     </main>
   </div>
 
-  <script type="module" src="docs.js"></script>
+  <script type="module" src="/docs-site/docs.js"></script>
 </body>
 </html>

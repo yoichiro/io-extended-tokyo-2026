@@ -63,9 +63,7 @@ await LanguageModel.create({ expectedInputs: [{ type: 'image' }] });
 - Windows: エクスプローラーで `index.html` を右クリック → 「プログラムから開く」→ Chrome
 - Linux: `xdg-open index.html` もしくはファイラーからダブルクリック
 
-ローカルサーバは不要です。`file://` プロトコルで開いても動くように、スターターは classic script として構成されています。
-
-ページ上部のバッジがすべて ✅ **available** になっていれば準備完了です。
+ローカルサーバは不要です。ページ上部のバッジがすべて ✅ **available** になっていれば準備完了です。
 
 ## 📁 ファイル構成
 
@@ -110,7 +108,7 @@ Chrome のバージョンが古い可能性があります。`chrome://settings/
 
 ### スクリプトが読み込まれない / 何も表示されない
 
-Chrome の DevTools（右クリック → 検証 → Console）を開いてエラーを確認してください。もし `Cross-Origin` 系のエラーが出ている場合は、`starter/` フォルダごとローカルに保存されていることを確認してください（ZIP から抽出時にパスが変わっていないか）。
+Chrome の DevTools（右クリック → 検証 → Console）を開いてエラーを確認してください。<code>starter/</code> フォルダの中身（<code>lib/schema.js</code> や <code>assets/sample-card-data.js</code>）が揃っていないと動きません。ZIP をきちんと展開できているか確認してください。
 
 ### 名刺 OCR で結果が不正確
 

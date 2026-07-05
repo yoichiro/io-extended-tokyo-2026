@@ -5,7 +5,7 @@
 
 ---
 
-## 🚦 参加者が最初に詰まりやすいポイント TOP 5
+## 🚦 参加者が最初に詰まりやすいポイント
 
 ### 1. `LanguageDetector is not defined` などのエラー
 → **Chrome バージョンが古い可能性が最も高い**。今回の 4 API は Chrome 148 Stable から標準搭載。
@@ -18,19 +18,11 @@
 - Chapter 0 の「環境チェックを再実行」ボタンを押しても DL は始まらない（availability だけを確認するため）
 - 会場 Wi-Fi 経由の DL は 10〜30 分かかることがある
 
-### 3. `file://` で開いていて CORS エラー
-→ ES module の import が失敗する。次のコマンドを教える：
-```bash
-python3 -m http.server 8000
-# → http://localhost:8000/starter/index.html
-```
-参加者に `python3` がなければ、Node の `npx serve` や VS Code の Live Server 拡張でも OK。
-
-### 4. `prompt()` の戻り値が JSON じゃない
+### 3. `prompt()` の戻り値が JSON じゃない
 → `responseConstraint` を渡し忘れている。Ch4/5 の STEP 2 を再確認。
 また、`JSON.parse()` を忘れて生文字列を表示していないかも確認。
 
-### 5. 名刺 OCR で結果が不正確
+### 4. 名刺 OCR で結果が不正確
 → まず**同梱のサンプル画像**で動くかを確認する。
 参加者の画像が斜め・低解像度・光量不足なら精度が落ちる。「サンプル画像で動くならコードは正しい」と伝える。
 
@@ -116,7 +108,7 @@ console.log(await lm.prompt('Say hi'));
 `starter/assets/sample-card.png`
 
 ### solutions への一時切替（動作確認用）
-`starter/index.html` の `<script src="main.js">` を一時的に `<script src="../solutions/main.js">` に変更。
+`starter/index.html` の `<script src="main.js">` の行を一時的に `<script src="../solutions/main.js">` に書き換える（他の 2 つの script タグ（schema.js / sample-card-data.js）は starter/solutions で内容同一なので触らなくて OK）。
 確認後は必ず元に戻すこと。
 
 ---

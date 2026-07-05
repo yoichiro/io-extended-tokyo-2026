@@ -113,7 +113,7 @@ const result = await session.someMethod(input);</code></pre>
         <h1>🔤 Chapter 1: Language Detector</h1>
 
         <div class="meta-card">
-          <strong>所要時間:</strong> 7 分 / <strong>難易度:</strong> ⭐️ / <strong>使う共通ステップ:</strong> ①②③<br>
+          <strong>所要時間:</strong> 7 分 / <strong>難易度:</strong> ⭐️<br>
           <strong>この章のご褒美:</strong> たった 7 分でオンデバイス AI を初めて動かす成功体験。多言語文字列の言語を自動判定する小さなツールが手に入ります
         </div>
 
@@ -180,6 +180,20 @@ const result = await session.someMethod(input);</code></pre>
           💡 <strong>ライフサイクル</strong>: 一度 <code>create()</code> したインスタンスは何度でも <code>detect()</code> できます。判定のたびに <code>create()</code> するのは無駄なので、可能なら再利用しましょう。
         </div>
 
+        <h2>💻 やってみよう！</h2>
+
+        <ol>
+          <li><strong>📝 コードを書く</strong> — <code>starter/main.js</code> の <code>handleLanguageDetector()</code> 関数内、<code>// TODO N:</code> コメントの下にコードを追記する</li>
+          <li><strong>🔄 リロード</strong> — Chrome で開いている <code>starter/index.html</code> のページを再読込（Cmd+R / Ctrl+R）</li>
+          <li><strong>🖱️ UI 操作</strong> — スターターアプリ上部の <strong>🔤 言語判定</strong> タブを開き、テキストエリアに文を入力して「判定する」ボタンを押す。以下 2 つは必ず両方試して、返される言語コードと信頼度の違いを観察してみてください：
+            <ul>
+              <li>フランス語: <code>Bonjour, comment allez-vous ?</code> → 結果配列のトップが <code>fr</code>、高い信頼度</li>
+              <li>日本語: <code>こんにちは、今日はいい天気ですね。</code> → 結果配列のトップが <code>ja</code>、高い信頼度</li>
+            </ul>
+            余裕があれば <code>Hi</code> のような短い文字列も試すと、信頼度がぐっと下がる様子が観察できます</li>
+          <li><strong>✅ 動作確認</strong> — 出力エリアに <code>[{ detectedLanguage: 'fr', confidence: 0.98 }, ...]</code> のような配列が表示されれば成功！</li>
+        </ol>
+
         <div class="step">
           <h3>🌱 STEP 1: 最小動作（3 分）</h3>
           <p><strong>やること:</strong> 入力文の言語を判定するだけ。</p>
@@ -239,7 +253,7 @@ const detector = await LanguageDetector.create(
         <h1>🌐 Chapter 2: Translator</h1>
 
         <div class="meta-card">
-          <strong>所要時間:</strong> 10 分 / <strong>難易度:</strong> ⭐️⭐️ / <strong>使う共通ステップ:</strong> ①②③<br>
+          <strong>所要時間:</strong> 10 分 / <strong>難易度:</strong> ⭐️⭐️<br>
           <strong>この章のご褒美:</strong> Gemini Nano のモデルが目の前でダウンロードされる瞬間を目撃できる。完成後は多言語を自前で翻訳できるオフライン翻訳ツールが動きます
         </div>
 
@@ -305,6 +319,20 @@ const detector = await LanguageDetector.create(
         <div class="callout">
           💡 <strong>ペアごとにインスタンスを持つ</strong>: en→ja と ja→en は別々の <code>Translator</code> インスタンスです。両方向翻訳したいアプリでは、2 つのインスタンスを作って管理します。
         </div>
+
+        <h2>💻 やってみよう！</h2>
+
+        <ol>
+          <li><strong>📝 コードを書く</strong> — <code>starter/main.js</code> の <code>handleTranslate()</code> 関数内、<code>// TODO N:</code> コメントの下にコードを追記する</li>
+          <li><strong>🔄 リロード</strong> — Chrome で開いている <code>starter/index.html</code> のページを再読込（Cmd+R / Ctrl+R）</li>
+          <li><strong>🖱️ UI 操作</strong> — スターターアプリ上部の <strong>🌐 翻訳</strong> タブを開き、翻訳元/先の言語を選び、テキストエリアに文を入力して「翻訳する」ボタンを押す。以下 2 つは必ず両方試して、言語ペアごとにモデルが分かれている挙動を確認してください：
+            <ul>
+              <li>ja → en で「今日は晴れていて気持ちがいいですね。」→ 英訳が返る（初回はモデル DL のため進捗バーが動く）</li>
+              <li>en → fr で <code>I love machine learning.</code> → 仏訳が返る（別ペアなので、これも初回は再び進捗バーが動く。ペアごとに専用モデルがある証拠です）</li>
+            </ul>
+            同じペアで 2 回目に実行すると、進捗バーは出ずに即翻訳されます（キャッシュされた証拠）</li>
+          <li><strong>✅ 動作確認</strong> — 出力エリアに翻訳結果が表示されれば成功！（初めての言語ペアはモデル DL のため進捗バーが動き、2 回目以降は即座に翻訳されます）</li>
+        </ol>
 
         <div class="step">
           <h3>🌱 STEP 1: 最小動作（4 分）</h3>
@@ -372,7 +400,7 @@ const translator = await Translator.create({
         <h1>📝 Chapter 3: Summarizer</h1>
 
         <div class="meta-card">
-          <strong>所要時間:</strong> 10 分 / <strong>難易度:</strong> ⭐️⭐️ / <strong>使う共通ステップ:</strong> ①②③<br>
+          <strong>所要時間:</strong> 10 分 / <strong>難易度:</strong> ⭐️⭐️<br>
           <strong>この章のご褒美:</strong> タイプライター風に流れるストリーミング出力を体験できる。長文が数秒で TL;DR・箇条書き・見出しへと形を変える要約ツールが完成します
         </div>
 
@@ -454,6 +482,24 @@ for await (const chunk of stream) {
           💡 <strong>チャンクの粒度</strong>: <code>chunk</code> は数文字〜数十文字ずつ届きます。累積して表示していくことで「タイプライター風」の演出になります。
         </div>
 
+        <h2>💻 やってみよう！</h2>
+
+        <ol>
+          <li><strong>📝 コードを書く</strong> — <code>starter/main.js</code> の <code>handleSummarize()</code> 関数内、<code>// TODO N:</code> コメントの下にコードを追記する</li>
+          <li><strong>🔄 リロード</strong> — Chrome で開いている <code>starter/index.html</code> のページを再読込（Cmd+R / Ctrl+R）</li>
+          <li><strong>🖱️ UI 操作</strong> — スターターアプリ上部の <strong>📝 要約</strong> タブを開き、200 文字以上の長文を入力して「要約する」ボタンを押す。以下は <a href="https://www.eisbahn.jp/yoichiro/2026/06/zero_knowledge_pitch_builder.html" target="_blank" rel="noopener">洋一郎さんのブログ記事</a>からの引用です（もちろんご自身で用意した文章でも OK です）：
+            <blockquote style="border-left: 4px solid #4285f4; padding: 0.5rem 1rem; background: color-mix(in srgb, #4285f4 6%, transparent); margin: 0.5rem 0; border-radius: 0 6px 6px 0;">
+              僕は、ウェブブラウザを「今日の OS」だと考えています。多くのアプリケーションが、ネイティブアプリではなくウェブアプリとして動いている現状を見れば、これは事実上 OS と呼んで差し支えないのかなと思っています。そして、今後のアプリケーションの形態は、これまでのような「CPU が駆動させる」ものから「LLM が駆動させる」ものへとシフトしていくのではないか、と僕は予想しています。
+            </blockquote>
+            上の文章を貼り付けて、<strong>同じ入力文</strong>で以下 2 パターンのオプションを切り替えて実行し、出力の違いを観察してください：
+            <ul>
+              <li>type=<code>key-points</code>, length=<code>medium</code>, Streaming <strong>ON</strong> → 要点が箇条書きで、文字が徐々に流れて表示される</li>
+              <li>type=<code>headline</code>, length=<code>short</code>, Streaming <strong>OFF</strong> → 一行の見出し風の要約が一気に返る</li>
+            </ul>
+            type/length で「要約の性格」がガラッと変わることを体感できます</li>
+          <li><strong>✅ 動作確認</strong> — 出力エリアに要約が表示されれば成功！（Streaming ON なら文字が徐々に埋まっていく様子を確認できます）</li>
+        </ol>
+
         <div class="step">
           <h3>🌱 STEP 1: 最小動作（4 分）</h3>
 <pre><code>// TODO 1: セッション作成
@@ -513,7 +559,7 @@ for await (const chunk of stream) {
         <h1>💬 Chapter 4: Prompt API テキスト — 感情分析＋タグ抽出</h1>
 
         <div class="meta-card">
-          <strong>所要時間:</strong> 13 分 / <strong>難易度:</strong> ⭐️⭐️⭐️ / <strong>使う共通ステップ:</strong> ①②③<br>
+          <strong>所要時間:</strong> 13 分 / <strong>難易度:</strong> ⭐️⭐️⭐️<br>
           <strong>この章のご褒美:</strong> レビュー文を投げれば毎回同じ形の JSON が返ってくる、LLM を関数のように使える感動を体験できる。文章→データ変換の土台が身につきます
         </div>
 
@@ -640,6 +686,20 @@ for await (const chunk of stream) {
 //   required: ['sentiment', 'score', 'tags', 'summary'],
 // }</code></pre>
 
+        <h2>💻 やってみよう！</h2>
+
+        <ol>
+          <li><strong>📝 コードを書く</strong> — <code>starter/main.js</code> の <code>handlePromptText()</code> 関数内、<code>// TODO N:</code> コメントの下にコードを追記する</li>
+          <li><strong>🔄 リロード</strong> — Chrome で開いている <code>starter/index.html</code> のページを再読込（Cmd+R / Ctrl+R）</li>
+          <li><strong>🖱️ UI 操作</strong> — スターターアプリ上部の <strong>💬 感情分析</strong> タブを開き、レビュー文をテキストエリアに入力して「分析する」ボタンを押す。以下 2 つは必ず両方試して、感情スコアが真逆に振れることを確認してください：
+            <ul>
+              <li>ポジティブ:「このカメラは最高です！画質もバッテリー持ちも素晴らしくて、旅行に持っていく相棒として大満足。」 → <code>sentiment: "positive"</code>, <code>score</code> が <code>+1</code> 近く</li>
+              <li>ネガティブ:「値段が高すぎる上に、1 週間で壊れました。カスタマーサポートも遅くて最悪。返品したい。」 → <code>sentiment: "negative"</code>, <code>score</code> が <code>-1</code> 近く</li>
+            </ul>
+            さらに Temperature スライダを <code>0</code> と <code>1.5</code> の両極で試すと、<code>tags</code> や <code>summary</code> の揺らぎ方の違いも観察できます</li>
+          <li><strong>✅ 動作確認</strong> — 出力エリアに <code>{ "sentiment": "...", "score": ..., "tags": [...], "summary": "..." }</code> という JSON が表示されれば成功！</li>
+        </ol>
+
         <div class="step">
           <h3>🌱 STEP 1: 自由応答で会話（4 分）</h3>
 <pre><code>// TODO 1: セッション作成（system prompt 付き）
@@ -705,7 +765,7 @@ renderOutput('chapter-4', JSON.parse(output));</code></pre>
         <h1>📷 Chapter 5: Prompt API 画像 — 名刺 OCR</h1>
 
         <div class="meta-card">
-          <strong>所要時間:</strong> 10 分 / <strong>難易度:</strong> ⭐️⭐️⭐️ / <strong>使う共通ステップ:</strong> ①②③<br>
+          <strong>所要時間:</strong> 10 分 / <strong>難易度:</strong> ⭐️⭐️⭐️<br>
           <strong>この章のご褒美:</strong> 名刺画像から数秒で連絡先データが JSON になって返ってくる、名刺スキャナが完成します。撮った画像を AI に "見せる" マルチモーダル技術が手に入ります
         </div>
 
@@ -804,6 +864,20 @@ const contact = JSON.parse(output);
 //   },
 //   required: ['name', 'company'],
 // }</code></pre>
+
+        <h2>💻 やってみよう！</h2>
+
+        <ol>
+          <li><strong>📝 コードを書く</strong> — <code>starter/main.js</code> の <code>handlePromptImage()</code> 関数内、<code>// TODO N:</code> コメントの下にコードを追記する</li>
+          <li><strong>🔄 リロード</strong> — Chrome で開いている <code>starter/index.html</code> のページを再読込（Cmd+R / Ctrl+R）</li>
+          <li><strong>🖱️ UI 操作</strong> — スターターアプリ上部の <strong>📷 名刺OCR</strong> タブを開き、画像を用意してから「連絡先を抽出する」ボタンを押す。以下 2 通りは必ず両方試して、実画像と理想画像での抽出精度の違いを体感してください：
+            <ul>
+              <li>「<strong>サンプル画像を使う</strong>」ボタン → 同梱の名刺（田中 洋一郎 / Yoichiro Tanaka）が読み込まれ、氏名・会社・メール・電話などが期待通りに JSON へ抽出される</li>
+              <li>「<strong>ファイルを選択</strong>」で<strong>ご自身の名刺</strong>（もしくは会場で借りた別の名刺）をアップロード → 実物の名刺で、レイアウトやフォントによって抽出結果がどう変わるか観察</li>
+            </ul>
+            画像の解像度・傾き・光量で結果が大きく変わることに気付けます</li>
+          <li><strong>✅ 動作確認</strong> — 出力エリアに <code>{ "name": "...", "company": "...", "email": "...", "phone": [...], ... }</code> という JSON が表示されれば成功！</li>
+        </ol>
 
         <div class="step">
           <h3>🌱 STEP 1: マルチモーダルセッションを作る（4 分）</h3>

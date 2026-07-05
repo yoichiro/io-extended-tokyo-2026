@@ -8,8 +8,8 @@ Chrome Built-in AI（Gemini Nano をオンデバイスで使う仕組み）の 4
 
 | URL | 内容 |
 |-----|------|
-| [https://io-extended-tokyo-2026.web.app/](https://io-extended-tokyo-2026.web.app/) | 📚 Codelab（参加者向け解説サイト） |
-| [https://io-extended-tokyo-2026.web.app/staff/](https://io-extended-tokyo-2026.web.app/staff/) | 🎪 会場運営資料（スタッフ・メンター向け） |
+| [https://io-extended-tokyo-2026.yoichiro.dev/](https://io-extended-tokyo-2026.yoichiro.dev/) | 📚 Codelab（参加者向け解説サイト） |
+| [https://io-extended-tokyo-2026.yoichiro.dev/staff/](https://io-extended-tokyo-2026.yoichiro.dev/staff/) | 🎪 会場運営資料（スタッフ・メンター向け） |
 
 ## 📁 ディレクトリ構成
 

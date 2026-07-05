@@ -48,18 +48,14 @@ cd io-extended-tokyo-2026</code></pre>
         <h3>方法 B: ZIP ダウンロード</h3>
         <p>git を使わない方は、<a href="https://github.com/yoichiro/io-extended-tokyo-2026/releases/latest" target="_blank" rel="noopener">GitHub Releases</a> から最新の ZIP をダウンロードし、任意の場所に展開してください。</p>
 
-        <h3>ローカルサーバを起動</h3>
-        <p>ブラウザで <code>file://</code> プロトコル直接開くと ES module の CORS エラーが出るので、軽量ローカルサーバを立ち上げます。プロジェクトのルートで実行してください：</p>
-<pre><code># python3 の場合（推奨、追加インストール不要）
-python3 -m http.server 8000
-
-# Node.js が入っている方は
-npx -y serve</code></pre>
-
-        <h3>ブラウザで開く</h3>
-        <p><strong>Chrome 148 以降</strong>で以下の URL を開きます：</p>
-<pre><code>http://localhost:8000/starter/index.html</code></pre>
-        <p>ヘッダにある 5 つの環境バッジが <strong>すべて <code>✅ available</code></strong> になっていれば準備完了です！🎉</p>
+        <h3>Chrome で開く</h3>
+        <p>ローカルサーバは不要です！<strong>Chrome 148 以降</strong>で <code>starter/index.html</code> をダブルクリック（または右クリック → 「このアプリケーションで開く」→ Chrome）して開くだけ 🎉</p>
+        <ul>
+          <li>macOS: Finder で <code>starter/index.html</code> を右クリック → Chrome で開く</li>
+          <li>Windows: エクスプローラーで右クリック → 「プログラムから開く」→ Chrome</li>
+          <li>Linux: <code>xdg-open starter/index.html</code> もしくはファイラーからダブルクリック</li>
+        </ul>
+        <p>ヘッダにある 5 つの環境バッジが <strong>すべて <code>✅ available</code></strong> になっていれば準備完了です！</p>
 
         <div class="callout">
           💡 バッジに <code>⬇ downloadable</code> が残っている場合は、まだ Gemini Nano のモデルダウンロードが済んでいません。事前アナウンスの動作確認スニペットを再度実行してダウンロードを完了させてください。
@@ -93,7 +89,7 @@ const result = await session.someMethod(input);</code></pre>
           <strong>✅ Checkpoint</strong>
           <ol>
             <li>スターターを clone or ZIP でローカルに取得した</li>
-            <li>ローカルサーバを起動し、<code>http://localhost:8000/starter/index.html</code> を Chrome 148 以降で開いた</li>
+            <li><code>starter/index.html</code> を Chrome 148 以降でダブルクリックして開いた</li>
             <li>ヘッダの環境バッジが <strong>すべて <code>✅ available</code></strong> になっている</li>
             <li>共通の 3 ステップパターン（<code>availability</code> → <code>create</code> → 実行）と、availability の 4 状態を理解した</li>
           </ol>

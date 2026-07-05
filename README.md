@@ -35,9 +35,7 @@ io-extended-tokyo-2026/
 
 ```bash
 git clone https://github.com/yoichiro/io-extended-tokyo-2026.git
-cd io-extended-tokyo-2026
-python3 -m http.server 8000
-# → http://localhost:8000/starter/index.html を Chrome 148 以降で開く
+# → starter/index.html を Chrome 148 以降でダブルクリック（ローカルサーバ不要）
 ```
 
 参加前の環境準備は [starter/README.md](./starter/README.md) をご確認ください。

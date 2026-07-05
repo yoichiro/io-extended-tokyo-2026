@@ -2,50 +2,51 @@
 // Chrome Built-in AI ミニラボ — solutions/main.js
 // 全ての TODO を埋めた完成版。メンター/講師向け。
 // 参加者には配布しないでください。
+//
+// このファイルは classic script として読み込まれます。schema や
+// サンプル画像の base64 は window にぶら下がっている前提です。
 // =============================================================
 
-import { SENTIMENT_SCHEMA, BUSINESS_CARD_SCHEMA } from './lib/schema.js';
-
 // ---------- Common helpers ----------
-export const $ = (sel, root = document) => root.querySelector(sel);
-export const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-
-function chapterEl(tabId) {
-  return document.getElementById(tabId);
-}
-
-export function setStatus(tabId, msg, kind = 'info') {
-  const el = chapterEl(tabId)?.querySelector('.status');
+function setStatus(tabId, msg, kind = 'info') {
+  const el = document.getElementById(tabId)?.querySelector('.status');
   if (!el) return;
   el.textContent = msg;
   el.className = `status kind-${kind}`;
   el.hidden = !msg;
 }
 
-export function showProgress(tabId, pct) {
-  const bar = chapterEl(tabId)?.querySelector('.progress-bar');
-  const container = chapterEl(tabId)?.querySelector('.progress');
+function showProgress(tabId, pct) {
+  const bar = document.getElementById(tabId)?.querySelector('.progress-bar');
+  const container = document.getElementById(tabId)?.querySelector('.progress');
   if (!bar || !container) return;
   container.hidden = false;
   bar.style.width = `${Math.min(100, Math.max(0, pct))}%`;
 }
 
-export function hideProgress(tabId) {
-  const bar = chapterEl(tabId)?.querySelector('.progress-bar');
-  const container = chapterEl(tabId)?.querySelector('.progress');
+function hideProgress(tabId) {
+  const bar = document.getElementById(tabId)?.querySelector('.progress-bar');
+  const container = document.getElementById(tabId)?.querySelector('.progress');
   if (!bar || !container) return;
   bar.style.width = '0%';
   container.hidden = true;
 }
 
-export function renderOutput(tabId, textOrObj) {
-  const el = chapterEl(tabId)?.querySelector('.output');
+function renderOutput(tabId, textOrObj) {
+  const el = document.getElementById(tabId)?.querySelector('.output');
   if (!el) return;
   if (typeof textOrObj === 'string') {
     el.textContent = textOrObj;
   } else {
     el.textContent = JSON.stringify(textOrObj, null, 2);
   }
+}
+
+function base64ToBlob(base64, mime) {
+  const binary = atob(base64);
+  const buffer = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) buffer[i] = binary.charCodeAt(i);
+  return new Blob([buffer], { type: mime });
 }
 
 // ---------- Environment check ----------
@@ -57,7 +58,7 @@ const API_NAMES = {
   languageModelImage: '📷 Prompt API (image)',
 };
 
-export async function checkAvailability() {
+async function checkAvailability() {
   const safe = async (fn) => {
     try { return await fn(); } catch (e) { return 'unavailable'; }
   };
@@ -89,8 +90,8 @@ export async function checkAvailability() {
   };
 }
 
-export function renderAvailabilityBadges(results) {
-  const badges = $('#env-badges');
+function renderAvailabilityBadges(results) {
+  const badges = document.querySelector('#env-badges');
   if (!badges) return;
   badges.replaceChildren();
   for (const [key, label] of Object.entries(API_NAMES)) {
@@ -109,12 +110,12 @@ export function renderAvailabilityBadges(results) {
 
 // ---------- Tab switching ----------
 function initTabs() {
-  const tabs = $$('.tab');
+  const tabs = document.querySelectorAll('.tab');
   tabs.forEach((tab) => {
     tab.addEventListener('click', () => {
       const targetId = tab.dataset.tab;
       tabs.forEach((t) => t.setAttribute('aria-selected', t === tab ? 'true' : 'false'));
-      $$('.chapter').forEach((section) => {
+      document.querySelectorAll('.chapter').forEach((section) => {
         section.hidden = section.id !== targetId;
       });
     });
@@ -125,13 +126,13 @@ function initTabs() {
 // Chapter 1: 🔤 Language Detector (SOLVED)
 // =============================================================
 async function handleLanguageDetector() {
-  const text = $('#ld-input').value.trim();
+  const text = document.querySelector('#ld-input').value.trim();
   if (!text) {
     setStatus('chapter-1', 'テキストを入力してください', 'error');
     return;
   }
 
-  const useRestriction = $('#ld-restrict').checked;
+  const useRestriction = document.querySelector('#ld-restrict').checked;
   setStatus('chapter-1', '判定中...', 'info');
 
   try {
@@ -157,9 +158,9 @@ async function handleLanguageDetector() {
 // Chapter 2: 🌐 Translator (SOLVED)
 // =============================================================
 async function handleTranslate() {
-  const text = $('#tr-input').value.trim();
-  const sourceLanguage = $('#tr-source').value;
-  const targetLanguage = $('#tr-target').value;
+  const text = document.querySelector('#tr-input').value.trim();
+  const sourceLanguage = document.querySelector('#tr-source').value;
+  const targetLanguage = document.querySelector('#tr-target').value;
   if (!text) {
     setStatus('chapter-2', 'テキストを入力してください', 'error');
     return;
@@ -195,10 +196,10 @@ async function handleTranslate() {
 // Chapter 3: 📝 Summarizer (SOLVED)
 // =============================================================
 async function handleSummarize() {
-  const text = $('#sm-input').value.trim();
-  const type = $('#sm-type').value;
-  const length = $('#sm-length').value;
-  const useStreaming = $('#sm-stream').checked;
+  const text = document.querySelector('#sm-input').value.trim();
+  const type = document.querySelector('#sm-type').value;
+  const length = document.querySelector('#sm-length').value;
+  const useStreaming = document.querySelector('#sm-stream').checked;
 
   if (!text) {
     setStatus('chapter-3', 'テキストを入力してください', 'error');
@@ -234,9 +235,9 @@ async function handleSummarize() {
 // Chapter 4: 💬 Prompt API テキスト (SOLVED)
 // =============================================================
 async function handlePromptText() {
-  const systemPrompt = $('#pt-system').value.trim();
-  const reviewText = $('#pt-input').value.trim();
-  const temperature = parseFloat($('#pt-temperature').value);
+  const systemPrompt = document.querySelector('#pt-system').value.trim();
+  const reviewText = document.querySelector('#pt-input').value.trim();
+  const temperature = parseFloat(document.querySelector('#pt-temperature').value);
 
   if (!reviewText) {
     setStatus('chapter-4', 'レビュー文を入力してください', 'error');
@@ -272,7 +273,7 @@ let currentImageBlob = null;
 
 function previewImage(blob) {
   currentImageBlob = blob;
-  const preview = $('#pi-preview');
+  const preview = document.querySelector('#pi-preview');
   if (!preview) return;
   const url = URL.createObjectURL(blob);
   preview.replaceChildren();
@@ -323,7 +324,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderAvailabilityBadges(results);
   console.log('availability:', results);
 
-  $('#btn-recheck')?.addEventListener('click', async () => {
+  document.querySelector('#btn-recheck')?.addEventListener('click', async () => {
     setStatus('chapter-0', 'チェック中...', 'info');
     const r = await checkAvailability();
     renderAvailabilityBadges(r);
@@ -331,27 +332,25 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // Chapter handlers
-  $('#ld-run')?.addEventListener('click', handleLanguageDetector);
-  $('#tr-run')?.addEventListener('click', handleTranslate);
-  $('#sm-run')?.addEventListener('click', handleSummarize);
-  $('#pt-run')?.addEventListener('click', handlePromptText);
-  $('#pt-temperature')?.addEventListener('input', (e) => {
-    const label = $('#pt-temperature-value');
+  document.querySelector('#ld-run')?.addEventListener('click', handleLanguageDetector);
+  document.querySelector('#tr-run')?.addEventListener('click', handleTranslate);
+  document.querySelector('#sm-run')?.addEventListener('click', handleSummarize);
+  document.querySelector('#pt-run')?.addEventListener('click', handlePromptText);
+  document.querySelector('#pt-temperature')?.addEventListener('input', (e) => {
+    const label = document.querySelector('#pt-temperature-value');
     if (label) label.textContent = e.target.value;
   });
-  $('#pi-file')?.addEventListener('change', (e) => {
+  document.querySelector('#pi-file')?.addEventListener('change', (e) => {
     const file = e.target.files?.[0];
     if (file) previewImage(file);
   });
-  $('#pi-use-sample')?.addEventListener('click', async () => {
+  document.querySelector('#pi-use-sample')?.addEventListener('click', () => {
     try {
-      const res = await fetch('./assets/sample-card.png');
-      if (!res.ok) throw new Error('サンプル画像が見つかりません');
-      const blob = await res.blob();
+      const blob = base64ToBlob(window.SAMPLE_CARD_BASE64, window.SAMPLE_CARD_MIME || 'image/png');
       previewImage(blob);
     } catch (err) {
       setStatus('chapter-5', `サンプル画像読み込みエラー: ${err.message}`, 'error');
     }
   });
-  $('#pi-run')?.addEventListener('click', handlePromptImage);
+  document.querySelector('#pi-run')?.addEventListener('click', handlePromptImage);
 });

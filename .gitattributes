@@ -1,0 +1,17 @@
+# Exclude the following from `git archive` output (and from GitHub's
+# "Source code (zip)" downloads on Releases). Participants get a clean
+# archive containing only starter/ and root LICENSE.
+#
+# NOTE: Patterns without a leading slash match at any depth. Use a
+# leading slash (e.g. /README.md) to restrict to the repository root
+# so that starter/README.md is preserved.
+
+/solutions/         export-ignore
+/event-materials/   export-ignore
+/docs/              export-ignore
+/docs-site/         export-ignore
+/firebase.json      export-ignore
+/.firebaserc        export-ignore
+/.gitignore         export-ignore
+/.gitattributes     export-ignore
+/README.md          export-ignore

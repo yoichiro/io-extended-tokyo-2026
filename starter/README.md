@@ -57,15 +57,13 @@ await LanguageModel.create({ expectedInputs: [{ type: 'image' }] });
 
 ## 🚀 コードラボの始め方
 
-このディレクトリを解凍または clone し、軽量ローカルサーバで起動してください：
+このディレクトリを解凍または clone したら、**`starter/index.html` を Chrome でダブルクリック** するだけで開けます 🎉
 
-```bash
-# 推奨: python3 の軽量サーバで（ES module の CORS 対策）
-python3 -m http.server 8000
-# → http://localhost:8000/starter/index.html
-```
+- macOS: Finder で `index.html` を右クリック → 「このアプリケーションで開く」→ Chrome
+- Windows: エクスプローラーで `index.html` を右クリック → 「プログラムから開く」→ Chrome
+- Linux: `xdg-open index.html` もしくはファイラーからダブルクリック
 
-`file://` プロトコルで直接開くと、ES module の import が CORS エラーになる場合があります。
+ローカルサーバは不要です。`file://` プロトコルで開いても動くように、スターターは classic script として構成されています。
 
 ページ上部のバッジがすべて ✅ **available** になっていれば準備完了です。
 
@@ -73,15 +71,16 @@ python3 -m http.server 8000
 
 ```
 starter/
-├── index.html      # メインの HTML（タブ UI・完成済み）
-├── styles.css      # スタイル定義（完成済み）
-├── main.js         # ここに TODO コメントがあります ← ここを書く
+├── index.html                    # メインの HTML（タブ UI・完成済み）
+├── styles.css                    # スタイル定義（完成済み）
+├── main.js                       # ここに TODO コメントがあります ← ここを書く
 ├── lib/
-│   └── schema.js   # Prompt API 用の JSON Schema（完成済み）
+│   └── schema.js                 # Prompt API 用の JSON Schema（完成済み）
 ├── assets/
-│   └── sample-card.png  # 名刺 OCR のサンプル画像
-├── LICENSE         # Apache-2.0
-└── README.md       # このファイル
+│   ├── sample-card.png           # 名刺 OCR のサンプル画像（参考用）
+│   └── sample-card-data.js       # 上記画像を base64 で埋め込んだ JS（file:// 動作用）
+├── LICENSE                       # Apache-2.0
+└── README.md                     # このファイル
 ```
 
 ## 🎓 進め方
@@ -109,9 +108,9 @@ Chrome のバージョンが古い可能性があります。`chrome://settings/
 - OS/ハードウェアが要件を満たしていない可能性
 - ストレージが 22 GB 以上空いているか確認
 
-### `Failed to fetch` / モジュール読込エラー
+### スクリプトが読み込まれない / 何も表示されない
 
-`file://` で直接開いていると CORS エラーが出ることがあります。`python3 -m http.server 8000` で軽量サーバを起動して `http://localhost:8000/` から開いてください。
+Chrome の DevTools（右クリック → 検証 → Console）を開いてエラーを確認してください。もし `Cross-Origin` 系のエラーが出ている場合は、`starter/` フォルダごとローカルに保存されていることを確認してください（ZIP から抽出時にパスが変わっていないか）。
 
 ### 名刺 OCR で結果が不正確
 

@@ -2,9 +2,13 @@
 // Prompt API 用 JSON Schema 定義
 // これらは各章で responseConstraint に渡すことで、
 // LanguageModel の出力を指定形式の JSON に強制できます。
+//
+// このコードラボは file:// で直接開いて動くように、ES module では
+// なく classic script として読み込みます。window にぶら下げて
+// main.js からグローバル変数として参照します。
 // =============================================================
 
-export const SENTIMENT_SCHEMA = {
+window.SENTIMENT_SCHEMA = {
   type: 'object',
   properties: {
     sentiment: {
@@ -16,13 +20,13 @@ export const SENTIMENT_SCHEMA = {
       type: 'number',
       minimum: -1,
       maximum: 1,
-      description: '感情スコア（-1: 最もネガティブ、+1: 最もポジティブ）',
+      description: '感情スコア(-1: 最もネガティブ、+1: 最もポジティブ)',
     },
     tags: {
       type: 'array',
       items: { type: 'string' },
       maxItems: 5,
-      description: '内容を表す短いタグ（最大 5 個）',
+      description: '内容を表す短いタグ(最大 5 個)',
     },
     summary: {
       type: 'string',
@@ -32,7 +36,7 @@ export const SENTIMENT_SCHEMA = {
   required: ['sentiment', 'score', 'tags', 'summary'],
 };
 
-export const BUSINESS_CARD_SCHEMA = {
+window.BUSINESS_CARD_SCHEMA = {
   type: 'object',
   properties: {
     name: { type: 'string', description: '氏名' },
@@ -42,7 +46,7 @@ export const BUSINESS_CARD_SCHEMA = {
     phone: {
       type: 'array',
       items: { type: 'string' },
-      description: '電話番号（複数ある場合は配列で）',
+      description: '電話番号(複数ある場合は配列で)',
     },
     address: { type: 'string', description: '住所' },
     website: { type: 'string', description: 'ウェブサイト URL' },

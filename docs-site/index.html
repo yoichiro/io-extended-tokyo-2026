@@ -27,6 +27,13 @@
 
         <h2>📚 Chrome Built-in AI とは？</h2>
         <p>Chrome 内蔵の <strong>Gemini Nano</strong> モデルを使い、サーバー通信なしにブラウザ内で LLM 推論を実行できる仕組みです。プライバシー・遅延・コストの面で強力な利点があります。</p>
+
+        <ul>
+          <li>🔒 <strong>プライバシー</strong> — 入力したテキストや画像は<strong>ブラウザ内で完結して処理</strong>され、外部サーバーへ一切送信されません。機密文書、社内資料、個人情報、下書き段階のアイデアなど「他人に見られたくないデータ」を安全に AI 処理にかけられます。GDPR や日本の個人情報保護法への対応もシンプルになり、「AI を使いたいけどデータ流出が怖い」という組織の壁を大きく下げます。</li>
+          <li>⚡ <strong>遅延</strong> — クラウド LLM ではリクエストごとにネットワークを往復し、地理的距離やサーバー混雑の影響を受けます。オンデバイス推論は<strong>ネットワークのラウンドトリップがゼロ</strong>なので、体感速度が段違いに速く、応答も安定します。ストリーミング出力（Chapter 3 で扱います）と組み合わせれば、ユーザーが待たされない滑らかな UX を実現できます。オフラインや電波の悪い場所でも動作する点も強みです。</li>
+          <li>💰 <strong>コスト</strong> — クラウド LLM API の<strong>従量課金がかかりません</strong>。モデルは初回ダウンロード後は端末に常駐し、何回呼び出しても追加コストはゼロ。無料/フリーミアム型サービス、教育アプリ、月間何百万リクエストが飛ぶ大規模サービスでも、AI 呼び出しコストを心配せずに機能を組み込めます。運用時のコスト予測も立てやすくなります。</li>
+        </ul>
+
         <p>今回扱う 4 つの API（Language Detector / Translator / Summarizer / Prompt API）は、いずれも <strong>Chrome 148 Stable から標準搭載</strong>されており、フラグ設定なしで使えます。Chrome を最新版に更新するだけで OK です 🎉</p>
 
         <h2>🎯 5 つの API</h2>
@@ -44,7 +51,7 @@
         <h3>ZIP をダウンロードして展開</h3>
         <p>以下のリンクから ZIP を取得し、任意の場所に展開してください：</p>
         <p><a href="https://github.com/yoichiro/io-extended-tokyo-2026/archive/refs/heads/main.zip" target="_blank" rel="noopener"><strong>📥 スターター ZIP をダウンロード</strong></a></p>
-        <p>展開すると <code>starter/</code> フォルダが出てきます。この ZIP は <code>.gitattributes</code> のフィルタで <strong>参加者が触るファイルだけ</strong>に絞られています 🎁</p>
+        <p>展開すると <code>starter/</code> フォルダが出てきます 🎁</p>
 
         <div class="callout">
           💡 <code>git clone</code> は使わないでください。全ファイル（模範解答含む）が落ちてくるので、答えが見えてしまいます 🙈
@@ -107,7 +114,7 @@ const result = await session.someMethod(input);</code></pre>
 
         <div class="meta-card">
           <strong>所要時間:</strong> 7 分 / <strong>難易度:</strong> ⭐️ / <strong>使う共通ステップ:</strong> ①②③<br>
-          <strong>この章のご褒美:</strong> <code>availability</code> の 4 状態を最も分かりやすく体験
+          <strong>この章のご褒美:</strong> たった 7 分でオンデバイス AI を初めて動かす成功体験。多言語文字列の言語を自動判定する小さなツールが手に入ります
         </div>
 
         <h2>🎯 ゴール</h2>
@@ -233,7 +240,7 @@ const detector = await LanguageDetector.create(
 
         <div class="meta-card">
           <strong>所要時間:</strong> 10 分 / <strong>難易度:</strong> ⭐️⭐️ / <strong>使う共通ステップ:</strong> ①②③<br>
-          <strong>この章のご褒美:</strong> モデル DL 進捗を <code>downloadprogress</code> イベントで可視化
+          <strong>この章のご褒美:</strong> Gemini Nano のモデルが目の前でダウンロードされる瞬間を目撃できる。完成後は多言語を自前で翻訳できるオフライン翻訳ツールが動きます
         </div>
 
         <h2>🎯 ゴール</h2>
@@ -366,7 +373,7 @@ const translator = await Translator.create({
 
         <div class="meta-card">
           <strong>所要時間:</strong> 10 分 / <strong>難易度:</strong> ⭐️⭐️ / <strong>使う共通ステップ:</strong> ①②③<br>
-          <strong>この章のご褒美:</strong> <code>summarizeStreaming()</code> でリアルタイム出力を体験
+          <strong>この章のご褒美:</strong> タイプライター風に流れるストリーミング出力を体験できる。長文が数秒で TL;DR・箇条書き・見出しへと形を変える要約ツールが完成します
         </div>
 
         <h2>🎯 ゴール</h2>
@@ -507,7 +514,7 @@ for await (const chunk of stream) {
 
         <div class="meta-card">
           <strong>所要時間:</strong> 13 分 / <strong>難易度:</strong> ⭐️⭐️⭐️ / <strong>使う共通ステップ:</strong> ①②③<br>
-          <strong>この章のご褒美:</strong> 「LLM を関数として使う」感覚 — <code>responseConstraint</code> で JSON 強制
+          <strong>この章のご褒美:</strong> レビュー文を投げれば毎回同じ形の JSON が返ってくる、LLM を関数のように使える感動を体験できる。文章→データ変換の土台が身につきます
         </div>
 
         <h2>🎯 ゴール</h2>
@@ -699,7 +706,7 @@ renderOutput('chapter-4', JSON.parse(output));</code></pre>
 
         <div class="meta-card">
           <strong>所要時間:</strong> 10 分 / <strong>難易度:</strong> ⭐️⭐️⭐️ / <strong>使う共通ステップ:</strong> ①②③<br>
-          <strong>この章のご褒美:</strong> マルチモーダル × structured output の合わせ技
+          <strong>この章のご褒美:</strong> 名刺画像から数秒で連絡先データが JSON になって返ってくる、名刺スキャナが完成します。撮った画像を AI に "見せる" マルチモーダル技術が手に入ります
         </div>
 
         <h2>🎯 ゴール</h2>

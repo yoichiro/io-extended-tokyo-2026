@@ -57,7 +57,7 @@ await LanguageModel.create({ expectedInputs: [{ type: 'image' }] });
 
 ## 🚀 コードラボの始め方
 
-このディレクトリを解凍または clone したら、**`starter/index.html` を Chrome でダブルクリック** するだけで開けます 🎉
+ダウンロードした ZIP を任意の場所に展開したら、**`starter/index.html` を Chrome でダブルクリック** するだけで開けます 🎉
 
 - macOS: Finder で `index.html` を右クリック → 「このアプリケーションで開く」→ Chrome
 - Windows: エクスプローラーで `index.html` を右クリック → 「プログラムから開く」→ Chrome

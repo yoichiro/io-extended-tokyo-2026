@@ -29,14 +29,11 @@ io-extended-tokyo-2026/
 ## 🎓 参加者の方へ
 
 1. Codelab サイトを開いてください（上記の公開 URL）
-2. このリポジトリをクローンまたは ZIP でダウンロード
-3. `starter/` ディレクトリに移動し、README の手順に従って環境をセットアップ
+2. **スターター ZIP を[こちらからダウンロード](https://github.com/yoichiro/io-extended-tokyo-2026/archive/refs/heads/main.zip)** して任意の場所に展開
+3. `starter/index.html` を Chrome 148 以降でダブルクリック（ローカルサーバ不要）
 4. Codelab の指示に沿って 5 章のミニデモを進めてください
 
-```bash
-git clone https://github.com/yoichiro/io-extended-tokyo-2026.git
-# → starter/index.html を Chrome 148 以降でダブルクリック（ローカルサーバ不要）
-```
+> **⚠️ `git clone` は使わないでください。** 全ファイル（模範解答含む）が落ちてきて答えが見えてしまいます。ZIP ダウンロードは `.gitattributes` のフィルタで参加者が触るファイルだけに絞られています。
 
 参加前の環境準備は [starter/README.md](./starter/README.md) をご確認ください。
 

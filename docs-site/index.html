@@ -41,12 +41,14 @@
         <h2>🚀 スターターを取得しよう</h2>
         <p>コードを書き始める前に、スターターキット（HTML/CSS/JS の骨格＋TODO コメント付き）をローカルに用意しましょう。</p>
 
-        <h3>方法 A: git clone（推奨）</h3>
-<pre><code>git clone https://github.com/yoichiro/io-extended-tokyo-2026.git
-cd io-extended-tokyo-2026</code></pre>
+        <h3>ZIP をダウンロードして展開</h3>
+        <p>以下のリンクから ZIP を取得し、任意の場所に展開してください：</p>
+        <p><a href="https://github.com/yoichiro/io-extended-tokyo-2026/archive/refs/heads/main.zip" target="_blank" rel="noopener"><strong>📥 スターター ZIP をダウンロード</strong></a></p>
+        <p>展開すると <code>starter/</code> フォルダが出てきます。この ZIP は <code>.gitattributes</code> のフィルタで <strong>参加者が触るファイルだけ</strong>に絞られています 🎁</p>
 
-        <h3>方法 B: ZIP ダウンロード</h3>
-        <p>git を使わない方は、<a href="https://github.com/yoichiro/io-extended-tokyo-2026/releases/latest" target="_blank" rel="noopener">GitHub Releases</a> から最新の ZIP をダウンロードし、任意の場所に展開してください。</p>
+        <div class="callout">
+          💡 <code>git clone</code> は使わないでください。全ファイル（模範解答含む）が落ちてくるので、答えが見えてしまいます 🙈
+        </div>
 
         <h3>Chrome で開く</h3>
         <p>ローカルサーバは不要です！<strong>Chrome 148 以降</strong>で <code>starter/index.html</code> をダブルクリック（または右クリック → 「このアプリケーションで開く」→ Chrome）して開くだけ 🎉</p>
@@ -88,7 +90,7 @@ const result = await session.someMethod(input);</code></pre>
         <div class="checkpoint">
           <strong>✅ Checkpoint</strong>
           <ol>
-            <li>スターターを clone or ZIP でローカルに取得した</li>
+            <li>スターター ZIP をダウンロードして任意の場所に展開した</li>
             <li><code>starter/index.html</code> を Chrome 148 以降でダブルクリックして開いた</li>
             <li>ヘッダの環境バッジが <strong>すべて <code>✅ available</code></strong> になっている</li>
             <li>共通の 3 ステップパターン（<code>availability</code> → <code>create</code> → 実行）と、availability の 4 状態を理解した</li>

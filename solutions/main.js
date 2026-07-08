@@ -1,5 +1,5 @@
 // =============================================================
-// Chrome Built-in AI ミニラボ — solutions/main.js
+// Built-in AI ミニラボ — solutions/main.js
 // 全ての TODO を埋めた完成版。メンター/講師向け。
 // 参加者には配布しないでください。
 //
@@ -318,7 +318,7 @@ async function handlePromptImage() {
 // ---------- Bootstrap ----------
 document.addEventListener('DOMContentLoaded', async () => {
   initTabs();
-  console.log('Chrome Built-in AI ミニラボ (solutions) 起動しました 🚀');
+  console.log('Built-in AI ミニラボ (solutions) 起動しました 🚀');
 
   const results = await checkAvailability();
   renderAvailabilityBadges(results);

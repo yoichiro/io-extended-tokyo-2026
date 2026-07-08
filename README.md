@@ -1,8 +1,8 @@
-# Chrome Built-in AI 60分ミニラボ
+# Built-in AI 60分ミニラボ
 
 Google I/O Extended Tokyo 2026 の会場ハンズオン用リポジトリです。
 
-Chrome Built-in AI（Gemini Nano をオンデバイスで使う仕組み）の 4 つの主要 API を 60 分で体験するコードラボと、その解説サイト、会場運営資料を含んでいます。
+Built-in AI（Gemini Nano をオンデバイスで使う仕組み）の 4 つの主要 API を 60 分で体験するコードラボと、その解説サイト、会場運営資料を含んでいます。
 
 ## 🔗 公開 URL
 

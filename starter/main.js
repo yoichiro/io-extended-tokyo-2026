@@ -1,5 +1,5 @@
 // =============================================================
-// Chrome Built-in AI ミニラボ — main.js
+// Built-in AI ミニラボ — main.js
 // 参加者は各章の TODO コメント下にコードを書き足していきます。
 // 共通ヘルパ（この上部）は編集不要です。
 //
@@ -363,7 +363,7 @@ async function handlePromptImage() {
 // ---------- Bootstrap ----------
 document.addEventListener('DOMContentLoaded', async () => {
   initTabs();
-  console.log('Chrome Built-in AI ミニラボ 起動しました 🚀');
+  console.log('Built-in AI ミニラボ 起動しました 🚀');
 
   const results = await checkAvailability();
   renderAvailabilityBadges(results);

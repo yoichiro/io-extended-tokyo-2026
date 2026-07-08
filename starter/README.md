@@ -1,10 +1,10 @@
-# Chrome Built-in AI 60分ミニラボ
+# Built-in AI 60分ミニラボ
 
 Google I/O Extended Tokyo 2026 の会場ハンズオン用スターターキットです。
 
 ## 🎯 このコードラボで作るもの
 
-タブ切替式のミニアプリで、Chrome Built-in AI の 4 つの API を体験します：
+タブ切替式のミニアプリで、Built-in AI の 4 つの API を体験します：
 
 - 🔤 Language Detector — 言語判定
 - 🌐 Translator — 多言語翻訳

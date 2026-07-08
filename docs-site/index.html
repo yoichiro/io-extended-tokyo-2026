@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Chrome Built-in AI 60分ミニラボ — Codelab</title>
+  <title>Built-in AI 60分ミニラボ — Codelab</title>
   <link rel="stylesheet" href="/docs-site/styles.css">
 </head>
 <body>
   <div class="layout">
     <aside class="sidebar">
       <h1 class="logo">🧪 Codelab</h1>
-      <p class="tagline">Chrome Built-in AI<br>60分ミニラボ</p>
+      <p class="tagline">Built-in AI<br>60分ミニラボ</p>
       <nav>
         <ol id="toc"></ol>
       </nav>
@@ -25,7 +25,7 @@
           <strong>この章のゴール:</strong> スターターコードを取得してローカルで起動し、全 API の共通パターンを理解し、環境が使えることを確認する
         </div>
 
-        <h2>📚 Chrome Built-in AI とは？</h2>
+        <h2>📚 Built-in AI とは？</h2>
         <p>Chrome 内蔵の <strong>Gemini Nano</strong> モデルを使い、サーバー通信なしにブラウザ内で LLM 推論を実行できる仕組みです。プライバシー・遅延・コストの面で強力な利点があります。</p>
 
         <ul>
@@ -460,7 +460,7 @@ const translator = await Translator.create({
           <li><strong>戻り値</strong>: <code>Promise&lt;string&gt;</code> — 要約結果の文字列。<code>format</code> が <code>'markdown'</code> のときは Markdown 記法が含まれます。</li>
         </ul>
         <p><strong>戻り値の例（type: 'key-points', length: 'medium'）：</strong></p>
-<pre><code>* Chrome Built-in AI は Gemini Nano をオンデバイスで実行する仕組み
+<pre><code>* Built-in AI は Gemini Nano をオンデバイスで実行する仕組み
 * サーバー通信不要でプライバシー・遅延・コストに強い
 * Language Detector / Translator / Summarizer / Prompt の 4 API を提供</code></pre>
 
@@ -568,7 +568,7 @@ for await (const chunk of stream) {
 
         <h2>📚 API ざっくり紹介</h2>
         <p>Prompt API（グローバル名は <code>LanguageModel</code>）は、他の 3 つの API と違って<strong>「これに特化した機能」がなく、汎用的な LLM 呼び出しインターフェイス</strong>です。プロンプトを書いて自由な出力を得たり、JSON Schema で出力形式を縛ったりできます。</p>
-        <p>Chrome Built-in AI の中で最も柔軟で、他 3 API では対応できないタスク（分類・抽出・生成・変換など）はすべてこの API で実現します。</p>
+        <p>Built-in AI の中で最も柔軟で、他 3 API では対応できないタスク（分類・抽出・生成・変換など）はすべてこの API で実現します。</p>
         <p><strong>主な機能：</strong></p>
         <ul>
           <li><strong>チャット形式のセッション管理</strong>（system / user / assistant ロール、会話履歴保持）</li>
@@ -983,7 +983,7 @@ renderOutput('chapter-5', JSON.parse(output));</code></pre>
 
         <h2>📚 さらに学ぶ</h2>
         <ul>
-          <li><a href="https://developer.chrome.com/docs/ai/built-in" target="_blank" rel="noopener">Chrome Built-in AI 公式ドキュメント</a></li>
+          <li><a href="https://developer.chrome.com/docs/ai/built-in" target="_blank" rel="noopener">Built-in AI 公式ドキュメント</a></li>
           <li><a href="https://developer.chrome.com/docs/ai/prompt-api" target="_blank" rel="noopener">Prompt API 詳細</a></li>
           <li><a href="https://developer.chrome.com/docs/ai/language-detection" target="_blank" rel="noopener">Language Detection API</a></li>
           <li><a href="https://developer.chrome.com/docs/ai/translator-api" target="_blank" rel="noopener">Translator API</a></li>
@@ -995,7 +995,7 @@ renderOutput('chapter-5', JSON.parse(output));</code></pre>
 
         <div class="checkpoint">
           <strong>🎊 お疲れさまでした！</strong><br>
-          Chrome Built-in AI の 4 API を全部触った経験、めちゃくちゃ貴重です。
+          Built-in AI の 4 API を全部触った経験、めちゃくちゃ貴重です。
           ここから先はあなたのアイデア次第。世界を驚かせる Web AI アプリを作ってください 🚀
         </div>
       </article>

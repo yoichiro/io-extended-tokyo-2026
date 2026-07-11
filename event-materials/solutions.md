@@ -17,14 +17,11 @@ async function handleLanguageDetector() {
     return;
   }
 
-  const useRestriction = document.querySelector('#ld-restrict').checked;
   setStatus('chapter-1', '判定中...', 'info');
 
   try {
     // TODO 1: create session
-    const detector = await LanguageDetector.create(
-      useRestriction ? { expectedInputLanguages: ['en', 'ja', 'fr'] } : undefined
-    );
+    const detector = await LanguageDetector.create();
 
     // TODO 2: detect
     const results = await detector.detect(text);
@@ -41,7 +38,6 @@ async function handleLanguageDetector() {
 ```
 
 **ポイント**:
-- `expectedInputLanguages` は `create()` のオプションとして渡す（外に書きがち）
 - `detect()` の戻り値は配列。忘れずに `slice(0, 3)` でトップ 3 に絞る
 
 ---

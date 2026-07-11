@@ -132,14 +132,11 @@ async function handleLanguageDetector() {
     return;
   }
 
-  const useRestriction = document.querySelector('#ld-restrict').checked;
   setStatus('chapter-1', '判定中...', 'info');
 
   try {
     // TODO 1: create session
-    const detector = await LanguageDetector.create(
-      useRestriction ? { expectedInputLanguages: ['en', 'ja', 'fr'] } : undefined
-    );
+    const detector = await LanguageDetector.create();
 
     // TODO 2: detect
     const results = await detector.detect(text);

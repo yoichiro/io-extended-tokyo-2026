@@ -137,14 +137,11 @@ async function handleLanguageDetector() {
     return;
   }
 
-  const useRestriction = document.querySelector('#ld-restrict').checked;
   setStatus('chapter-1', '判定中...', 'info');
 
   try {
     // -----------------------------------------------------------
     // TODO 1: LanguageDetector.create() でセッションを作る
-    //   ヒント: useRestriction が true のときは
-    //   { expectedInputLanguages: ['en', 'ja', 'fr'] } を渡す
     // -----------------------------------------------------------
 
 

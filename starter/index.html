@@ -51,7 +51,7 @@
 
       <div class="hint">
         <strong>📇 メタ情報</strong><br>
-        所要時間: 7分 / 難易度: ⭐️ / 使う共通ステップ: ①②③<br>
+        所要時間: 5分 / 難易度: ⭐️ / 使う共通ステップ: ①②③<br>
         ハイライト: <code>availability</code> の 4 状態を最も分かりやすく体験
       </div>
 
@@ -62,10 +62,6 @@
         <textarea id="ld-input" class="textarea" placeholder="Bonjour, comment allez-vous?"></textarea>
       </div>
 
-      <div class="field">
-        <label><input type="checkbox" id="ld-restrict"> 候補言語を英・日・仏に絞る（STEP 3）</label>
-      </div>
-
       <button class="button-primary" id="ld-run">判定する</button>
       <div class="status" hidden></div>
       <div class="output"></div>
@@ -73,11 +69,7 @@
       <details class="solution-peek">
         <summary>🚨 どうしても詰まったら（見本コードを開く）</summary>
         <pre><code>// TODO 1
-const detector = await LanguageDetector.create(
-  document.getElementById('ld-restrict').checked
-    ? { expectedInputLanguages: ['en', 'ja', 'fr'] }
-    : undefined
-);
+const detector = await LanguageDetector.create();
 
 // TODO 2
 const results = await detector.detect(text);

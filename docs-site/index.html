@@ -113,8 +113,8 @@ const result = await session.someMethod(input);</code></pre>
         <h1>🔤 Chapter 1: Language Detector</h1>
 
         <div class="meta-card">
-          <strong>所要時間:</strong> 7 分 / <strong>難易度:</strong> ⭐️<br>
-          <strong>この章のご褒美:</strong> たった 7 分でオンデバイス AI を初めて動かす成功体験。多言語文字列の言語を自動判定する小さなツールが手に入ります
+          <strong>所要時間:</strong> 5 分 / <strong>難易度:</strong> ⭐️<br>
+          <strong>この章のご褒美:</strong> たった 5 分でオンデバイス AI を初めて動かす成功体験。多言語文字列の言語を自動判定する小さなツールが手に入ります
         </div>
 
         <h2>🎯 ゴール</h2>
@@ -127,10 +127,9 @@ const result = await session.someMethod(input);</code></pre>
 
         <h2>📖 API リファレンス</h2>
 
-        <h3><code>LanguageDetector.availability(options?)</code></h3>
+        <h3><code>LanguageDetector.availability()</code></h3>
         <p>この環境で Language Detector が使えるかを判定する静的メソッド。<strong>ページ読込直後の環境チェックで最初に呼ぶ関数</strong>です。</p>
         <ul>
-          <li><strong>引数</strong>: 省略可。特定言語だけを判定対象にしたい場合は <code>{ expectedInputLanguages: ['en', 'ja', ...] }</code> を渡すことで、その言語ペアが使えるかを判定できます。</li>
           <li><strong>戻り値</strong>: <code>Promise&lt;string&gt;</code>。以下 4 状態のいずれかが返ります。
             <ul>
               <li><code>'unavailable'</code> — 環境非対応（Chrome バージョン不足・OS 要件不足など）</li>
@@ -146,7 +145,6 @@ const result = await session.someMethod(input);</code></pre>
         <ul>
           <li><strong>引数</strong>: 省略可。オプションオブジェクト。
             <ul>
-              <li><code>expectedInputLanguages?: string[]</code> — 判定候補を絞る言語コード配列（<code>['en', 'ja', 'fr']</code> など）。指定すると精度と速度が向上します。</li>
               <li><code>monitor?: (m: EventTarget) =&gt; void</code> — モデル DL 進捗を購読するためのコールバック。<code>m.addEventListener('downloadprogress', e =&gt; ...)</code> で <code>e.loaded</code>（0〜1）を受け取れます。</li>
             </ul>
           </li>
@@ -217,20 +215,6 @@ renderOutput('chapter-1', results.slice(0, 3));</code></pre>
           <p>Language Detector は多数の候補（低信頼度のものも含む）を返します。トップ 3 で十分実用的です。</p>
         </div>
 
-        <div class="step">
-          <h3>🌳 STEP 3: 候補言語を絞る（2 分）</h3>
-          <p><strong>やること:</strong> UI の「候補言語を英・日・仏に絞る」チェックボックスが ON のときだけ <code>expectedInputLanguages</code> を渡す。</p>
-<pre><code>// TODO 1 を書き換え
-const detector = await LanguageDetector.create(
-  document.getElementById('ld-restrict').checked
-    ? { expectedInputLanguages: ['en', 'ja', 'fr'] }
-    : undefined
-);</code></pre>
-          <div class="callout">
-            💡 候補を絞ると精度と速度が向上します。用途があらかじめ限定的なら積極的に指定すべきオプション。
-          </div>
-        </div>
-
         <h2>🎨 Extend this!</h2>
         <ul>
           <li>入力中にリアルタイムで判定（<code>input</code> イベント + デバウンス）</li>
@@ -244,7 +228,6 @@ const detector = await LanguageDetector.create(
           <ol>
             <li>英語・日本語・仏語の文が正しく判定される</li>
             <li>トップ 3 の信頼度が出力に表示される</li>
-            <li>候補絞り込みチェックの ON/OFF で結果配列の中身が変わる</li>
           </ol>
         </div>
       </article>

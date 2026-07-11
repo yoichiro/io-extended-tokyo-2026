@@ -36,7 +36,6 @@
 |-----|-----|-----|
 | 「Promise が表示された」 | `detector.detect(text)` に `await` 忘れ | `await` を付ける |
 | 出力が単一言語だけ | `results[0]` を渡している | `results.slice(0, 3)` に修正 |
-| 「絞り込みチェックが効かない」 | `expectedInputLanguages` が create の外に書かれている | create のオプションとして渡す |
 
 ### 🌐 Chapter 2 (Translator)
 
